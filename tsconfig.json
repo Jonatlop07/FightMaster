@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "rootDirs": [
+      "./src",
+      "./test"
+    ],
+    "baseUrl": "./",
+    "paths": {
+      "@core/*": ["src/core/*"],
+      "@infrastructure/*": ["src/data/*"],
+      "@application/*": ["src/framework/*"],
+      "@test/*": ["test/*"]
+    },
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es2017",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": false
+  },
+  "include": [
+    "./src/**/*.ts",
+    "./test/**/*.ts",
+    "node_modules/handlebars/types/index.d.ts"
+  ]
+}
