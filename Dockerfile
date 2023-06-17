@@ -4,6 +4,6 @@ COPY package*.json ./
 ENV NODE_ENV=development
 RUN npm install glob rimraf
 RUN npm install
-COPY . .
+COPY ./ ./
 RUN npm run build
 CMD ["node", "dist/main"]

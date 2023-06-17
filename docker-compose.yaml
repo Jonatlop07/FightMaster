@@ -6,6 +6,7 @@ services:
     restart: always
     env_file:
       - env/db/db.env
+    user: postgres
     volumes:
       - ./fight_master_db.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
     ports:
@@ -18,7 +19,7 @@ services:
     depends_on:
       - db
     env_file:
-      - env/app/local.env
+      - env/app/test.env
     ports:
       - "3001:3001"
       - "9229:9229"
