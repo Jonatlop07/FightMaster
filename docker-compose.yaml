@@ -1,0 +1,24 @@
+version: "3.9"
+services:
+  db:
+    container_name: fight_master_db
+    image: postgres:latest
+    restart: always
+    env_file:
+      - env/db/db.env
+    volumes:
+      - ./fight_master_db.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
+    ports:
+      - "35000:5432"
+  app:
+    build: .
+    container_name: fight_master_app
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    env_file:
+      - env/app/local.env
+    ports:
+      - "3001:3001"
+      - "9229:9229"
