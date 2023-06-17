@@ -55,17 +55,33 @@
     "moduleFileExtensions": [
       "js",
       "json",
-      "ts"
+      "ts",
+      "feature"
     ],
-    "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
+    "rootDir": ".",
+    "moduleNameMapper": {
+      "@core/(.*)$": "<rootDir>/src/core/$1",
+      "@db/(.*)$": "<rootDir>/src/db/$1",
+      "@framework/(.*)$": "<rootDir>/src/framework/$1",
+      "@test/(.*)$": "<rootDir>/test/$1"
+    },
+    "testMatch": [
+      "<rootDir>/test/bdd-functional/tests/**/*.steps.ts",
+      "<rootDir>/test/unit/**/*.spec.ts",
+      "<rootDir>/test/integration/**/*.integration_spec.ts"
+    ],
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
-    "coverageDirectory": "../coverage",
+    "coverageDirectory": "./coverage",
     "testEnvironment": "node"
+  },
+  "_moduleAliases": {
+    "@core": "src/core",
+    "@db": "src/db",
+    "@framework": "src/framework"
   }
 }
