@@ -3,7 +3,7 @@ import { Test } from '@nestjs/testing';
 import { CreateFighterInteractor } from '@core/application/fighting/create_fighter';
 import FightingDITokens from '@core/domain/fighting/di';
 import { FighterDetailsDTO } from '@core/domain/fighting/dto/details.dto';
-import { RootModule } from '@framework/module/.root.module';
+import { TestModule } from '@test/integration/test.module';
 
 describe('Create Fighter Feature', () => {
   let app: INestApplication;
@@ -11,9 +11,7 @@ describe('Create Fighter Feature', () => {
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
-      imports: [
-        RootModule
-      ],
+      imports: [TestModule]
     }).compile();
     app = module.createNestApplication();
     interactor = module.get<CreateFighterInteractor>(

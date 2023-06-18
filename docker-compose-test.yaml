@@ -25,3 +25,16 @@ services:
     ports:
       - "3001:3001"
       - "9229:9229"
+
+#// Crear la db
+#docker compose -f ./docker-compose-test.yaml up db -d
+#// Ver los logs de la db
+#docker compose logs db
+#// Esperar a que la DB esté inicializada y ejecutar el script en un contenedor
+#docker compose -f ./docker-compose-test.yaml up app
+#// Ver los logs del script
+#docker compose logs app
+#// Detener los contenedores y borrar los volúmenes
+#docker compose down -v
+#// Borrar la imagen
+#docker image rm fight_master_backend_app
