@@ -1,8 +1,8 @@
 import { Global, Module, OnApplicationBootstrap } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeOrmDirectory } from '@infrastructure/adapter/typeorm';
-import { TypeOrmLogger } from '@infrastructure/adapter/typeorm/logger';
+import { TypeOrmDirectory } from '@infrastructure/typeorm';
+import { TypeOrmLogger } from '@infrastructure/typeorm/logger';
 import { initializeTransactionalContext } from 'typeorm-transactional-cls-hooked';
 
 @Global()

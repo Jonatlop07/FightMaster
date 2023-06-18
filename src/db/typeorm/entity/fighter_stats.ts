@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
-import FighterDBEntity from '@infrastructure/adapter/typeorm/entity/fighter';
-import { DBConfiguration } from '@infrastructure/adapter/typeorm/db.config';
+import FighterDBEntity from '@infrastructure/typeorm/entity/fighter';
+import { DBConfiguration } from '@infrastructure/typeorm/config';
 
 @Entity({ name: 'fighterStats', schema: DBConfiguration.SCHEMA })
 export default class FighterStatsDBEntity {
