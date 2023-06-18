@@ -3,7 +3,11 @@ import { CoreException } from '@core/abstraction/exception/core.exception';
 import { Code } from '@core/abstraction/exception/type/code';
 import { ClassValidationDetails, ClassValidator } from '@core/abstraction/validation/class_validator';
 
-export default class Entity<TIdentifier extends string | number> {
+export interface RemovableEntity {
+  remove(): Promise<void>;
+}
+
+export class Entity<TIdentifier extends string | number> {
   protected id: Optional<TIdentifier>;
 
   public getId(): TIdentifier {
