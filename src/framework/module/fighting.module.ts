@@ -1,9 +1,9 @@
 import { Module, Provider } from '@nestjs/common';
 import FightingDITokens from '@core/domain/fighting/di';
-import { CreateFighterService } from '@core/application/fighting/create_fighter';
 import { FighterTypeOrmRepositoryAdapter } from '@db/typeorm/adapter';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FighterTypeOrmRepository } from '@db/typeorm/repository';
+import CreateFighterService from '@core/application/fighting/fighter/create_fighter.service';
 
 const repository_providers: Array<Provider> = [
   {

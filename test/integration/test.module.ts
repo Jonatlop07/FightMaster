@@ -7,7 +7,7 @@ import FighterStatsDBEntity from '@db/typeorm/entity/fighter_stats';
 import { FighterTypeOrmRepository } from '@db/typeorm/repository';
 import FightingDITokens from '@core/domain/fighting/di';
 import { FighterTypeOrmRepositoryAdapter } from '@db/typeorm/adapter';
-import { CreateFighterService } from '@core/application/fighting/create_fighter';
+import CreateFighterService from '@core/application/fighting/fighter/create_fighter.service';
 
 const getTypeOrmTestSettings = (config: ConfigService): TypeOrmModuleOptions => {
   const type = config.get('DATABASE_TYPE');

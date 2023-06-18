@@ -1,9 +1,9 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { CreateFighterInteractor } from '@core/application/fighting/create_fighter';
 import FightingDITokens from '@core/domain/fighting/di';
-import { FighterDetailsDTO } from '@core/domain/fighting/dto/details.dto';
+import { FighterDetailsDTO } from '@core/domain/fighting/dto/details';
 import { TestModule } from '@test/integration/test.module';
+import { CreateFighterInteractor } from '@core/domain/fighting/use_case/fighter/create_fighter';
 
 describe('Create Fighter Feature', () => {
   let app: INestApplication;

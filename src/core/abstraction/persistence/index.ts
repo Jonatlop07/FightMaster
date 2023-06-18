@@ -15,7 +15,7 @@ export interface Exists<EntityFilterParamsDTO> {
 }
 
 export interface FindOne<EntityFilterParamsDTO, EntityDTO> {
-  findOne(params: EntityFilterParamsDTO): Promise<Nullable<EntityDTO>>;
+  findOneBy(params: EntityFilterParamsDTO): Promise<Nullable<EntityDTO>>;
 }
 
 export interface FindAll<EntityFilterParamsDTO, EntityDTO> {
