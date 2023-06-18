@@ -32,6 +32,6 @@ export default class UpdateFighterService implements UpdateFighterInteractor {
       })
     );
     const updated_fighter: FighterDTO = await this.gateway.update(input.fighter_with_updates);
-    return { updated_fighter: updated_fighter };
+    return { updated_fighter };
   }
 }

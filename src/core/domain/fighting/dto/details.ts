@@ -12,3 +12,9 @@ export interface FighterStatsDetailsDTO {
   knockouts: number;
   submissions: number;
 }
+
+export interface EventDetailsDTO {
+  name: string;
+  location: string;
+  date: Date;
+}

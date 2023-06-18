@@ -4,12 +4,16 @@ import { CoreLogger, CoreLoggerService } from '@core/abstraction/logging';
 
 export default class Logger implements CoreLogger {
   constructor(
-    @Inject(CoreDITokens.LoggerService)
+    @Inject(CoreDITokens.CoreLogger)
     private readonly logger_service: CoreLoggerService
   ) {}
 
   public log(message: any, context: string) {
     this.logger_service.log(message, context);
+  }
+
+  public debug(message: any, context: string) {
+    this.logger_service.debug(message, context);
   }
 
   public warn(message: any, context: string) {

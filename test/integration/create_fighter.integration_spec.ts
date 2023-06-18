@@ -3,7 +3,7 @@ import { Test } from '@nestjs/testing';
 import FightingDITokens from '@core/domain/fighting/di';
 import { FighterDetailsDTO } from '@core/domain/fighting/dto/details';
 import { TestModule } from '@test/integration/test.module';
-import { CreateFighterInteractor } from '@core/domain/fighting/use_case/fighter/create_fighter';
+import { CreateFighterInteractor } from '@core/application/fighting/event';
 
 describe('Create Fighter Feature', () => {
   let app: INestApplication;
@@ -37,7 +37,7 @@ describe('Create Fighter Feature', () => {
         knockouts: 9
       }
     };
-    const { created_fighter } = await interactor.execute({ fighter_details });
+    const { created_entity: created_fighter } = await interactor.execute({ entity_details: fighter_details });
     expect(created_fighter).toBeDefined();
     expect(created_fighter.id).toBeDefined();
     expect(created_fighter.stats).toBeDefined();

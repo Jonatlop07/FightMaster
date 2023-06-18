@@ -14,3 +14,10 @@ export interface FighterStatsDTO {
   knockouts: number;
   submissions: number;
 }
+
+export interface EventDTO {
+  id: number;
+  name: string;
+  location: string;
+  date: Date;
+}

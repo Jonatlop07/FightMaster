@@ -7,7 +7,10 @@ import FighterStatsDBEntity from '@db/typeorm/entity/fighter_stats';
 import { FighterTypeOrmRepository } from '@db/typeorm/repository';
 import FightingDITokens from '@core/domain/fighting/di';
 import { FighterTypeOrmRepositoryAdapter } from '@db/typeorm/adapter';
-import CreateFighterService from '@core/application/fighting/fighter/create_fighter.service';
+import CreateEntityService from '@core/application/fighting/create_entity.service';
+import { FighterDetailsDTO } from '@core/domain/fighting/dto/details';
+import { FighterDTO } from '@core/domain/fighting/dto';
+import { EntityNames } from '@core/domain/fighting/entity/entity_names';
 
 const getTypeOrmTestSettings = (config: ConfigService): TypeOrmModuleOptions => {
   const type = config.get('DATABASE_TYPE');
@@ -42,7 +45,7 @@ const repository_providers: Array<Provider> = [
 const interactor_providers: Array<Provider> = [
   {
     provide: FightingDITokens.CreateFighterInteractor,
-    useFactory: (gateway) => new CreateFighterService(gateway),
+    useFactory: (gateway) => new CreateEntityService<FighterDetailsDTO, FighterDTO>(gateway, EntityNames.Fighter),
     inject: [FightingDITokens.FighterRepository],
   }
 ];

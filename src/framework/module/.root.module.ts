@@ -4,7 +4,7 @@ import { setEnvironment } from '../../config/environments';
 import { DatabaseModule } from '@framework/module/database.module';
 import { FightingModule } from '@framework/module/fighting.module';
 import CoreDITokens from '@core/abstraction/di';
-import Logger from '@core/shared/logger';
+import Logger from '@core/shared/logging';
 
 @Module({
   imports: [
