@@ -12,7 +12,7 @@ export class Fighter extends Entity<number> {
   private readonly name: string;
 
   @IsString()
-  private readonly weightClass: string;
+  private readonly weight_class: string;
 
   @IsString()
   private readonly nationality: string;
@@ -25,7 +25,7 @@ export class Fighter extends Entity<number> {
     this.id = payload.id;
     this.stats = payload.stats;
     this.name = payload.name;
-    this.weightClass = payload.weightClass;
+    this.weight_class = payload.weight_class;
     this.nationality = payload.nationality;
     this.team = payload.team;
   }
@@ -41,7 +41,7 @@ export class Fighter extends Entity<number> {
   }
 
   public getWeightClass(): string {
-    return this.weightClass;
+    return this.weight_class;
   }
 
   public getNationality(): string {

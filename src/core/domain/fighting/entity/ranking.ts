@@ -4,20 +4,20 @@ import { CreateRankingEntityPayload } from '@core/domain/fighting/entity/payload
 
 export class Ranking extends Entity<number> {
   @IsString()
-  private readonly weightClass: string;
+  private readonly weight_class: string;
 
   @IsInt()
   private readonly rank: number;
 
   @IsInt()
-  private readonly fighterId: number;
+  private readonly fighter_id: number;
 
   constructor(payload: CreateRankingEntityPayload) {
     super();
     this.id = payload.id;
-    this.weightClass = payload.weightClass;
+    this.weight_class = payload.weight_class;
     this.rank = payload.rank;
-    this.fighterId = payload.fighterId;
+    this.fighter_id = payload.fighter_id;
   }
 
   public static async new(payload: CreateRankingEntityPayload): Promise<Ranking> {
@@ -27,7 +27,7 @@ export class Ranking extends Entity<number> {
   }
 
   public getWeightClass(): string {
-    return this.weightClass;
+    return this.weight_class;
   }
 
   public getRank(): number {
@@ -35,6 +35,6 @@ export class Ranking extends Entity<number> {
   }
 
   public getFighterId(): number {
-    return this.fighterId;
+    return this.fighter_id;
   }
 }

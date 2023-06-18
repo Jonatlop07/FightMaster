@@ -1,15 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
-import FighterDBEntity from '@infrastructure/typeorm/entity/fighter';
-import { DBConfiguration } from '@infrastructure/typeorm/config';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
+import FighterDBEntity from '@db/typeorm/entity/fighter';
+import { DBConfiguration } from '@db/typeorm/config';
 
 @Entity({ name: 'fighterStats', schema: DBConfiguration.SCHEMA })
 export default class FighterStatsDBEntity {
   @PrimaryGeneratedColumn()
   public id: number;
-
-  @ManyToOne(() => FighterDBEntity, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'fighterId' })
-  public fighter: FighterDBEntity;
 
   @Column({ nullable: false, default: 0 })
   public wins: number;
@@ -22,4 +18,11 @@ export default class FighterStatsDBEntity {
 
   @Column({ nullable: false, default: 0 })
   public submissions: number;
+
+  @OneToOne(
+    () => FighterDBEntity,
+    (fighter) => fighter.stats,
+    { cascade: true }
+  )
+  public fighter: FighterDBEntity;
 }

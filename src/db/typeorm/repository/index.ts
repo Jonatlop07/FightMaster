@@ -1,11 +1,10 @@
 import { Repository } from 'typeorm';
-
-import UserDBEntity from '@infrastructure/typeorm/entity/user';
-import FighterDBEntity from '@infrastructure/typeorm/entity/fighter';
-import FighterStatsDBEntity from '@infrastructure/typeorm/entity/fighter_stats';
-import FightDBEntity from '@infrastructure/typeorm/entity/fight';
-import EventDBEntity from '@infrastructure/typeorm/entity/event';
-import RankingDBEntity from '@infrastructure/typeorm/entity/ranking';
+import UserDBEntity from '@db/typeorm/entity/user';
+import FighterDBEntity from '@db/typeorm/entity/fighter';
+import FighterStatsDBEntity from '@db/typeorm/entity/fighter_stats';
+import EventDBEntity from '@db/typeorm/entity/event';
+import RankingDBEntity from '@db/typeorm/entity/ranking';
+import FightDBEntity from '@db/typeorm/entity/fight';
 
 class UserTypeOrmRepository extends Repository<UserDBEntity> {}
 

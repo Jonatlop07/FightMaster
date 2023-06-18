@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { DBConfiguration } from '@infrastructure/typeorm/config';
+import { DBConfiguration } from '@db/typeorm/config';
 
 @Entity({ name: 'user', schema: DBConfiguration.SCHEMA })
 export default class UserDBEntity {
@@ -12,6 +12,6 @@ export default class UserDBEntity {
   @Column({ type: 'text', nullable: false })
   public password: string;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ name:'accessToken', type: 'text', nullable: true })
   public access_token: string;
 }

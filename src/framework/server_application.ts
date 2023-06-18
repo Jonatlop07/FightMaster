@@ -4,7 +4,7 @@ import { Logger } from '@nestjs/common';
 import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
 import { NestFactory } from '@nestjs/core';
 import { APIServerConfiguration } from '../config/api_server.config';
-import { RootModule } from '@application/module/.root.module';
+import { RootModule } from '@framework/module/.root.module';
 
 export class ServerApplication {
   private readonly host: string = APIServerConfiguration.HOST;

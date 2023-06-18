@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   db:
-    container_name: fight_master_db
+    container_name: fight_master_db_test
     image: postgres:latest
     restart: always
     env_file:
@@ -12,14 +12,16 @@ services:
     ports:
       - "35000:5432"
   app:
-    build: .
-    container_name: fight_master_app
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    container_name: fight_master_app_test
     volumes:
       - .:/app
     depends_on:
       - db
     env_file:
-      - ./env/app/prod.env
+      - ./env/app/test.env
     ports:
       - "3001:3001"
       - "9229:9229"

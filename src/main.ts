@@ -1,6 +1,5 @@
 import 'module-alias/register';
-
-import { ServerApplication } from '@application/server_application';
+import { ServerApplication } from '@framework/server_application';
 
 async function runApplication(): Promise<void> {
   if (!process.env.NODE_ENV) {

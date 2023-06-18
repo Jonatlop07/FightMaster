@@ -7,37 +7,25 @@ CREATE TABLE IF NOT EXISTS fight_master_db.user (
     id SERIAL PRIMARY KEY,
     email VARCHAR(125) NOT NULL,
     password TEXT NOT NULL,
-    access_token TEXT
-);
-
-CREATE TABLE IF NOT EXISTS fight_master_db.fighter (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    weightClass VARCHAR(255) NOT NULL,
-    nationality VARCHAR(255) NOT NULL,
-    team VARCHAR(255) NOT NULL
+    accessToken TEXT
 );
 
 CREATE TABLE IF NOT EXISTS fight_master_db.fighterStats (
     id SERIAL PRIMARY KEY,
-    fighterId INT NOT NULL,
     wins INT CHECK (wins >= 0),
     losses INT CHECK (losses >= 0),
     knockouts INT CHECK (knockouts >= 0),
-    submissions INT CHECK (submissions >= 0),
-    FOREIGN KEY (fighterId) REFERENCES fighter (id)
+    submissions INT CHECK (submissions >= 0)
 );
 
-CREATE TABLE IF NOT EXISTS fight_master_db.fight (
+CREATE TABLE IF NOT EXISTS fight_master_db.fighter (
     id SERIAL PRIMARY KEY,
-    eventId INT,
-    fighter1Id INT,
-    fighter2Id INT,
-    winnerId INT,
-    FOREIGN KEY (eventId) REFERENCES event (id),
-    FOREIGN KEY (fighter1Id) REFERENCES fighter (id),
-    FOREIGN KEY (fighter2Id) REFERENCES fighter (id),
-    FOREIGN KEY (winnerId) REFERENCES fighter (id)
+    fighterStatsId INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    weightClass VARCHAR(255) NOT NULL,
+    nationality VARCHAR(255) NOT NULL,
+    team VARCHAR(255) NOT NULL,
+    FOREIGN KEY (fighterStatsId) REFERENCES fight_master_db.fighterStats (id)
 );
 
 CREATE TABLE IF NOT EXISTS fight_master_db.event (
@@ -47,12 +35,24 @@ CREATE TABLE IF NOT EXISTS fight_master_db.event (
     date DATE
 );
 
+CREATE TABLE IF NOT EXISTS fight_master_db.fight (
+    id SERIAL PRIMARY KEY,
+    eventId INT,
+    fighter1Id INT,
+    fighter2Id INT,
+    winnerId INT,
+    FOREIGN KEY (eventId) REFERENCES fight_master_db.event (id),
+    FOREIGN KEY (fighter1Id) REFERENCES fight_master_db.fighter (id),
+    FOREIGN KEY (fighter2Id) REFERENCES fight_master_db.fighter (id),
+    FOREIGN KEY (winnerId) REFERENCES fight_master_db.fighter (id)
+);
+
 CREATE TABLE IF NOT EXISTS fight_master_db.ranking (
     id SERIAL PRIMARY KEY,
     weightClass VARCHAR(255),
     rank INT,
     fighterId INT,
-    FOREIGN KEY (fighterId) REFERENCES fighter (id)
+    FOREIGN KEY (fighterId) REFERENCES fight_master_db.fighter (id)
 );
 
 COMMIT;

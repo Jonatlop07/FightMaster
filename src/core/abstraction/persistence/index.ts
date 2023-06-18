@@ -6,36 +6,36 @@ export class Pagination {
   @IsNumber() @IsOptional() @IsPositive() offset;
 }
 
-export interface Create<C, R> {
-  create(c: C): Promise<R>;
+export interface Create<EntityDetailsDTO, EntityDTO> {
+  create(c: EntityDetailsDTO): Promise<EntityDTO>;
 }
 
-export interface Exists<F> {
-  exists(params: F): Promise<boolean>;
+export interface Exists<EntityFilterParamsDTO> {
+  exists(params: EntityFilterParamsDTO): Promise<boolean>;
 }
 
-export interface FindOne<F, R> {
-  findOne(params: F): Promise<Nullable<R>>;
+export interface FindOne<EntityFilterParamsDTO, EntityDTO> {
+  findOne(params: EntityFilterParamsDTO): Promise<Nullable<EntityDTO>>;
 }
 
-export interface FindAll<F, R> {
-  findAll(params: F, pagination?: Pagination): Promise<R[]>;
+export interface FindAll<EntityFilterParamsDTO, EntityDTO> {
+  findAll(params: EntityFilterParamsDTO, pagination?: Pagination): Promise<EntityDTO[]>;
 }
 
-export interface Update<T> {
-  update(t: T): Promise<T>;
+export interface Update<EntityDTO> {
+  update(e: EntityDTO): Promise<EntityDTO>;
 }
 
-export interface PartialUpdate<T> {
-  partialUpdate(previous: T, next: Partial<T>): Promise<T>;
+export interface PartialUpdate<EntityDTO> {
+  partialUpdate(previous: EntityDTO, next: Partial<EntityDTO>): Promise<EntityDTO>;
 }
 
-export interface PartialUpdateByParams<T, U, Q> {
-  partialUpdate(params: Q, updates: U): Promise<T>;
+export interface PartialUpdateByParams<EntityFilterParamsDTO, EntityUpdatesDTO, EntityDTO> {
+  partialUpdate(params: EntityFilterParamsDTO, updates: EntityUpdatesDTO): Promise<EntityDTO>;
 }
 
-export interface Delete<F, R> {
-  delete(params: F): Promise<Nullable<R> | void>;
+export interface Delete<EntityFilterParamsDTO, EntityDTO> {
+  delete(params: EntityFilterParamsDTO): Promise<Nullable<EntityDTO> | void>;
 }
 
 

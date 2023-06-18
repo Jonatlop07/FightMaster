@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { DBConfiguration } from '@infrastructure/typeorm/config';
+import { DBConfiguration } from '@db/typeorm/config';
 
 @Entity({ name: 'event', schema: DBConfiguration.SCHEMA })
 export default class EventDBEntity {

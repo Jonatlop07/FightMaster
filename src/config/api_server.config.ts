@@ -11,6 +11,6 @@ export class APIServerConfiguration {
     .required()
     .asBool();
 
-  public static readonly ORIGIN: string = env.get('API_ORIGIN').required().asString()
+  public static readonly ORIGIN: string = env.get('API_ORIGIN').required().asString();
   public static readonly GLOBAL_PREFIX: string = env.get('API_GLOBAL_PREFIX').required().asString();
 }

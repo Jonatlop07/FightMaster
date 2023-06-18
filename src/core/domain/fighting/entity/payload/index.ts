@@ -4,7 +4,7 @@ export type CreateFighterEntityPayload = {
   id: number;
   stats: FighterStats,
   name: string,
-  weightClass: string,
+  weight_class: string,
   nationality: string,
   team: string,
 };
@@ -19,10 +19,10 @@ export type CreateFighterStatsPayload = {
 
 export type CreateFightEntityPayload = {
   id: number;
-  eventId: number;
-  fighter1Id: number;
-  fighter2Id: number;
-  winnerId: number;
+  event_id: number;
+  fighter1_id: number;
+  fighter2_id: number;
+  winner_id: number;
 };
 
 export type CreateEventEntityPayload = {
@@ -34,7 +34,7 @@ export type CreateEventEntityPayload = {
 
 export type CreateRankingEntityPayload = {
   id: number;
-  weightClass: string;
+  weight_class: string;
   rank: number;
-  fighterId: number;
+  fighter_id: number;
 };

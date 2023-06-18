@@ -1,0 +1,11 @@
+FROM node:18.16-alpine as test
+WORKDIR /usr/src/fight_master_app
+COPY package*.json ./
+ENV NODE_ENV=test
+RUN npm install glob rimraf
+RUN npm install
+COPY ./ ./
+#RUN npm install -g dotenv-cli
+#RUN dotenv -e ./env/app/test.env npm run test
+#RUN npm run build
+CMD ["npm", "run", "test"]

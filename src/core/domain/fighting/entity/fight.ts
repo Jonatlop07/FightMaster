@@ -5,24 +5,24 @@ import { CreateFightEntityPayload } from '@core/domain/fighting/entity/payload';
 export class Fight extends Entity<number> {
 
   @IsInt()
-  private readonly eventId: number;
+  private readonly event_id: number;
 
   @IsInt()
-  private readonly fighter1Id: number;
+  private readonly fighter1_id: number;
 
   @IsInt()
-  private readonly fighter2Id: number;
+  private readonly fighter2_id: number;
 
   @IsInt()
-  private readonly winnerId: number;
+  private readonly winner_id: number;
 
   constructor(payload: CreateFightEntityPayload) {
     super();
     this.id = payload.id;
-    this.eventId = payload.eventId;
-    this.fighter1Id = payload.fighter1Id;
-    this.fighter2Id = payload.fighter2Id;
-    this.winnerId = payload.winnerId;
+    this.event_id = payload.event_id;
+    this.fighter1_id = payload.fighter1_id;
+    this.fighter2_id = payload.fighter2_id;
+    this.winner_id = payload.winner_id;
   }
 
   public static async new(payload: CreateFightEntityPayload): Promise<Fight> {
@@ -32,18 +32,18 @@ export class Fight extends Entity<number> {
   }
 
   public getEventId(): number {
-    return this.eventId;
+    return this.event_id;
   }
 
   public getFighter1Id(): number {
-    return this.fighter1Id;
+    return this.fighter1_id;
   }
 
   public getFighter2Id(): number {
-    return this.fighter2Id;
+    return this.fighter2_id;
   }
 
   public getWinnerId(): number {
-    return this.winnerId;
+    return this.winner_id;
   }
 }

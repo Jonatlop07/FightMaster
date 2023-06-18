@@ -1,19 +1,19 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
-import FighterDBEntity from '@infrastructure/typeorm/entity/fighter';
 import { DBConfiguration } from '../config';
+import FighterDBEntity from '@db/typeorm/entity/fighter';
 
 @Entity({ name: 'ranking', schema: DBConfiguration.SCHEMA })
 export default class RankingDBEntity {
   @PrimaryGeneratedColumn()
   public id: number;
 
-  @Column({ length: 255, nullable: true })
-  public weightClass: string;
+  @Column({ name: 'weightClass', length: 255, nullable: true })
+  public weight_class: string;
 
   @Column({ nullable: true })
   public rank: number;
 
   @ManyToOne(() => FighterDBEntity, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'fighterId' })
+  @JoinColumn({ name: 'fighterId', referencedColumnName: 'id' })
   public fighter: FighterDBEntity;
 }
