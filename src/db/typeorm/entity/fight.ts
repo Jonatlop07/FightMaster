@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { DBConfiguration } from '@db/typeorm/config';
 import EventDBEntity from '@db/typeorm/entity/event';
 import FighterDBEntity from '@db/typeorm/entity/fighter';
+import { Nullable } from '@core/abstraction/type';
 
 @Entity({ name: 'fight', schema: DBConfiguration.SCHEMA })
 export default class FightDBEntity {
@@ -20,7 +21,7 @@ export default class FightDBEntity {
   @JoinColumn({ name: 'fighter2Id', referencedColumnName: 'id' })
   public fighter2: FighterDBEntity;
 
-  @ManyToOne(() => FighterDBEntity, { onDelete: 'CASCADE' })
+  @ManyToOne(() => FighterDBEntity, { onDelete: 'CASCADE', nullable: true })
   @JoinColumn({ name: 'winnerId', referencedColumnName: 'id' })
-  public winner: FighterDBEntity;
+  public winner: Nullable<FighterDBEntity>;
 }

@@ -31,4 +31,11 @@ export interface EventFilterParamsDTO extends FilterByID {
   date?: Optional<Date>;
 }
 
+export interface FightFilterParamsDTO extends FilterByID {}
+
+export interface FightsFilterParamsDTO extends FilterWithPagination {
+  event_id?: Optional<number>;
+  fighter_id?: Optional<number>;
+  winner_id?: Optional<number>;
+}
 

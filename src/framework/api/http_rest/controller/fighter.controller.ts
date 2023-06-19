@@ -42,7 +42,11 @@ import {
 import { QueryFightersInteractor } from '@core/domain/fighting/use_case/fighter/query_fighters';
 import { QueryFighterInteractor } from '@core/domain/fighting/use_case/fighter/query_fighter';
 import { QueryFighterMapper, QueryFighterResponse } from '@framework/api/http_rest/model/fighter/query_fighter';
-import { UpdateFighterMapper, UpdateFighterRequestBody } from '@framework/api/http_rest/model/fighter/update_fighter';
+import {
+  UpdateFighterMapper,
+  UpdateFighterRequestBody,
+  UpdateFighterResponse
+} from '@framework/api/http_rest/model/fighter/update_fighter';
 import { UpdateFighterInteractor } from '@core/domain/fighting/use_case/fighter/update_fighter';
 import { DeleteFighterInteractor } from '@core/domain/fighting/use_case/fighter/delete_fighter';
 import { DeleteFighterMapper, DeleteFighterResponse } from '@framework/api/http_rest/model/fighter/delete_fighter';
@@ -184,7 +188,7 @@ export class FighterController {
   public async updateFighter(
     @Param('fighter_id', ParseIntPipe) fighter_id: number,
     @Body() body: UpdateFighterRequestBody
-  ) {
+  ): Promise<CoreResponse<UpdateFighterResponse>> {
     this.logger.log(
       `➕ UpdatedFighter body: ${toPrettyJsonString(body)}`,
       FighterController.name

@@ -1,3 +1,5 @@
+import { Nullable } from '@core/abstraction/type';
+
 export interface FighterDTO {
   id: number;
   name: string;
@@ -20,4 +22,12 @@ export interface EventDTO {
   name: string;
   location: string;
   date: Date;
+}
+
+export interface FightDTO {
+  id: number;
+  event_id: number;
+  fighter1_id: number;
+  fighter2_id: number;
+  winner_id: Nullable<number>;
 }

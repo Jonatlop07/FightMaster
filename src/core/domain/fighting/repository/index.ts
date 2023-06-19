@@ -7,6 +7,10 @@ import { CreateEventGateway } from '@core/domain/fighting/use_case/event/create_
 import { UpdateEventGateway } from '@core/domain/fighting/use_case/event/update_event';
 import { DeleteEventGateway } from '@core/domain/fighting/use_case/event/delete_event';
 import { QueryFightersGateway } from '@core/domain/fighting/use_case/fighter/query_fighters';
+import { CreateFightGateway } from '@core/domain/fighting/use_case/fight/create_fight';
+import { QueryFightsGateway } from '@core/domain/fighting/use_case/fight/query_fights';
+import { UpdateFightGateway } from '@core/domain/fighting/use_case/fight/update_fight';
+import { DeleteFightGateway } from '@core/domain/fighting/use_case/fight/delete_fight';
 
 export default interface FighterRepository
   extends
@@ -23,3 +27,11 @@ export interface EventRepository
   QueryEventsGateway,
   UpdateEventGateway,
   DeleteEventGateway {}
+
+export interface FightRepository
+  extends
+  CreateFightGateway,
+  QueryFightsGateway,
+  QueryFightsGateway,
+  UpdateFightGateway,
+  DeleteFightGateway {}

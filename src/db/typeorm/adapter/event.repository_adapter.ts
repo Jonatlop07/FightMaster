@@ -13,6 +13,14 @@ import { EventMapper } from '@db/typeorm/mapper/event.mapper';
 import { EntityName } from '@core/domain/fighting/entity/entity_name';
 import { Repository } from 'typeorm';
 
+const entity_alias = 'event';
+const entity_fields = {
+  id: 'id',
+  name: 'name',
+  location: 'location',
+  date: 'date',
+};
+
 export class EventTypeOrmRepositoryAdapter implements EventRepository {
   private static readonly entity_name: string =  EntityName.Event;
 
@@ -111,45 +119,43 @@ export class EventTypeOrmRepositoryAdapter implements EventRepository {
   public async findAll(
     params: EventsFilterParamsDTO,
   ): Promise<Array<EventDTO>> {
-    const entity_alias = 'event';
-    const entity_fields = {
-      id: 'id',
-      name: 'name',
-      location: 'location',
-      date: 'date',
-    };
     this.logger.log(
       `🔎 The ${EventTypeOrmRepositoryAdapter.entity_name}s filter params: ${toPrettyJsonString(params)} exists`,
       EventTypeOrmRepositoryAdapter.name
     );
-    const queryBuilder = this.repository.createQueryBuilder(entity_alias);
-    if (params.name) {
-      queryBuilder.orWhere(
-        `${entity_alias}.${entity_fields.name} = :${entity_fields.name}`,
-        { name: params.name }
-      );
-    }
-    if (params.location) {
-      queryBuilder.orWhere(
-        `${entity_alias}.${entity_fields.location} = :${entity_fields.location}`,
-        { location: params.location }
-      );
-    }
-    if (params.date) {
-      queryBuilder.orWhere(
-        `${entity_alias}.${entity_fields.date} = :${entity_fields.date}`,
-        { date: params.date }
-      );
-    }
-    if (params.pagination) {
-      queryBuilder.skip(params.pagination.offset).take(params.pagination.limit);
-    }
-    const found_entities: Array<EventDBEntity> = await queryBuilder.getMany();
+
+    const found_entities: Array<EventDBEntity> = await this.findAllByFilterParams(params);
     this.logger.log(
       `🔎 The following ${EventTypeOrmRepositoryAdapter.entity_name}s were found: ${toPrettyJsonString(found_entities)} exists`,
       EventTypeOrmRepositoryAdapter.name
     );
     return found_entities.map((entity) => EventMapper.fromDBEntity(entity));
+  }
+
+  private async findAllByFilterParams(params: EventsFilterParamsDTO): Promise<Array<EventDBEntity>> {
+    const query_builder = this.repository.createQueryBuilder(entity_alias);
+    if (params.name) {
+      query_builder.orWhere(
+        `${entity_alias}.${entity_fields.name} = :${entity_fields.name}`,
+        { name: params.name }
+      );
+    }
+    if (params.location) {
+      query_builder.orWhere(
+        `${entity_alias}.${entity_fields.location} = :${entity_fields.location}`,
+        { location: params.location }
+      );
+    }
+    if (params.date) {
+      query_builder.orWhere(
+        `${entity_alias}.${entity_fields.date} = :${entity_fields.date}`,
+        { date: params.date }
+      );
+    }
+    if (params.pagination) {
+      query_builder.skip(params.pagination.offset).take(params.pagination.limit);
+    }
+    return await query_builder.getMany();
   }
 }
 

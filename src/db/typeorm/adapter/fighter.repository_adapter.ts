@@ -17,6 +17,19 @@ import { FighterMapper } from '@db/typeorm/mapper/fighter.mapper';
 import { EntityName } from '@core/domain/fighting/entity/entity_name';
 import FighterStatsDBEntity from '@db/typeorm/entity/fighter_stats';
 
+const entity_alias = 'fighter';
+const entity_fields = {
+  id: 'id',
+  name: 'name',
+  weight_class: 'weightClass',
+  nationality: 'nationality',
+  team: 'team',
+  stats: {
+    alias: 'stats',
+    fighter_id: 'fighterId'
+  }
+};
+
 export class FighterTypeOrmRepositoryAdapter implements FighterRepository {
   private static readonly entity_name: string =  EntityName.Fighter;
 
@@ -28,6 +41,14 @@ export class FighterTypeOrmRepositoryAdapter implements FighterRepository {
     @Inject(CoreDITokens.CoreLogger)
     private readonly logger: CoreLogger
   ) {
+  }
+
+  private async findFighterById(fighter_id: number): Promise<FighterDBEntity> {
+    return await this.repository
+      .createQueryBuilder(entity_alias)
+      .leftJoinAndSelect(`${entity_alias}.${entity_fields.stats.alias}`, entity_fields.stats.alias)
+      .where(`${entity_alias}.${entity_fields.id} = :${entity_fields.id}`, { id: fighter_id })
+      .getOne();
   }
 
   public async create(details_dto: FighterDetailsDTO): Promise<FighterDTO> {
@@ -62,11 +83,7 @@ export class FighterTypeOrmRepositoryAdapter implements FighterRepository {
       `🔎 Searching ${FighterTypeOrmRepositoryAdapter.entity_name} by id: ${toPrettyJsonString(params.id)}`,
       FighterTypeOrmRepositoryAdapter.name
     );
-    const fighter_entity = await this.repository
-      .createQueryBuilder('fighter')
-      .leftJoinAndSelect('fighter.stats', 'stats')
-      .where('fighter.id = :id', { id: params.id })
-      .getOne();
+    const fighter_entity: FighterDBEntity = await this.findFighterById(params.id);
     if (!!fighter_entity) {
       this.logger.log(
         `🔎 Found ${FighterTypeOrmRepositoryAdapter.entity_name}: ${toPrettyJsonString(fighter_entity)}`,
@@ -119,60 +136,55 @@ export class FighterTypeOrmRepositoryAdapter implements FighterRepository {
   }
 
   public async findAll(params: FightersFilterParamsDTO): Promise<Array<FighterDTO>> {
-    const entity_alias = 'fighter';
-    const entity_fields = {
-      id: 'id',
-      name: 'name',
-      weight_class: 'weightClass',
-      nationality: 'nationality',
-      team: 'team',
-      stats: {
-        alias: 'stats',
-        fighter_id: 'fighterId'
-      }
-    };
     this.logger.log(
       `🔎 The ${FighterTypeOrmRepositoryAdapter.entity_name}s filter params: ${toPrettyJsonString(params)}`,
       FighterTypeOrmRepositoryAdapter.name
     );
-    const queryBuilder = this.repository.createQueryBuilder(entity_alias);
-    queryBuilder.leftJoinAndSelect(
-      `${entity_alias}.${entity_fields.stats.alias}`,
-      entity_fields.stats.alias,
-      `${entity_fields.stats.alias}.${entity_fields.stats.fighter_id} = ${entity_alias}.${entity_fields.id}`
-    );
-    if (params.name) {
-      queryBuilder.orWhere(
-        `${entity_alias}.${entity_fields.name} = :${entity_fields.name}`,
-        { name: params.name }
-      );
-    }
-    if (params.nationality) {
-      queryBuilder.orWhere(
-        `${entity_alias}.${entity_fields.nationality} = :${entity_fields.nationality}`,
-        { nationality: params.nationality }
-      );
-    }
-    if (params.team) {
-      queryBuilder.orWhere(
-        `${entity_alias}.${entity_fields.team} = :${entity_fields.team}`,
-        { team: params.team }
-      );
-    }
-    if (params.weight_class) {
-      queryBuilder.orWhere(
-        `${entity_alias}.${entity_fields.weight_class} = :${entity_fields.weight_class}`,
-        { weightClass: params.weight_class }
-      );
-    }
-    if (params.pagination) {
-      queryBuilder.skip(params.pagination.offset).take(params.pagination.limit);
-    }
-    const foundEntities: Array<FighterDBEntity> = await queryBuilder.getMany();
+
+    const foundEntities: Array<FighterDBEntity> = await this.findAllByFilterParams(params);
     this.logger.log(
       `🔎 The following ${FighterTypeOrmRepositoryAdapter.entity_name}s were found: ${toPrettyJsonString(foundEntities)}`,
       FighterTypeOrmRepositoryAdapter.name
     );
     return foundEntities.map((entity) => FighterMapper.fromDBEntity(entity));
+  }
+
+  private async findAllByFilterParams(
+    { name, nationality, pagination, team, weight_class }: FightersFilterParamsDTO
+  ): Promise<Array<FighterDBEntity>> {
+    const query_builder = this.repository.createQueryBuilder(entity_alias);
+    query_builder.leftJoinAndSelect(
+      `${entity_alias}.${entity_fields.stats.alias}`,
+      entity_fields.stats.alias,
+      `${entity_fields.stats.alias}.${entity_fields.stats.fighter_id} = ${entity_alias}.${entity_fields.id}`
+    );
+    if (name) {
+      query_builder.orWhere(
+        `${entity_alias}.${entity_fields.name} = :${entity_fields.name}`,
+        { name: name }
+      );
+    }
+    if (nationality) {
+      query_builder.orWhere(
+        `${entity_alias}.${entity_fields.nationality} = :${entity_fields.nationality}`,
+        { nationality: nationality }
+      );
+    }
+    if (team) {
+      query_builder.orWhere(
+        `${entity_alias}.${entity_fields.team} = :${entity_fields.team}`,
+        { team: team }
+      );
+    }
+    if (weight_class) {
+      query_builder.orWhere(
+        `${entity_alias}.${entity_fields.weight_class} = :${entity_fields.weight_class}`,
+        { weightClass: weight_class }
+      );
+    }
+    if (pagination) {
+      query_builder.skip(pagination.offset).take(pagination.limit);
+    }
+    return await query_builder.getMany();
   }
 }

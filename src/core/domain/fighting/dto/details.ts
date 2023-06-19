@@ -18,3 +18,10 @@ export interface EventDetailsDTO {
   location: string;
   date: Date;
 }
+
+export interface FightDetailsDTO {
+  event_id: number;
+  fighter1_id: number;
+  fighter2_id: number;
+  winner_id: number;
+}
