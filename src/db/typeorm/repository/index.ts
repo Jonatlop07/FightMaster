@@ -8,7 +8,11 @@ import FightDBEntity from '@db/typeorm/entity/fight';
 
 class UserTypeOrmRepository extends Repository<UserDBEntity> {}
 
-class FighterTypeOrmRepository extends Repository<FighterDBEntity> {}
+class FighterTypeOrmRepository extends Repository<FighterDBEntity> {
+  public async saveEntity(entity: FighterDBEntity): Promise<FighterDBEntity> {
+    return await this.save(entity);
+  }
+}
 
 class FighterStatsTypeOrmRepository extends Repository<FighterStatsDBEntity> {}
 

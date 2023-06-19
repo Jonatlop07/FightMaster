@@ -1,10 +1,12 @@
-import { Logger as NestLogger, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { setEnvironment } from '../../config/environments';
 import { DatabaseModule } from '@framework/module/database.module';
-import { FightingModule } from '@framework/module/fighting.module';
-import CoreDITokens from '@core/abstraction/di';
-import Logger from '@core/shared/logging';
+import { FighterModule } from '@framework/module/fighter.module';
+import { LoggingModule } from '@framework/module/logging.module';
+import { UsersModule } from '@framework/module/users.module';
+import { EventsModule } from '@framework/module/events.module';
+import { SettingsModule } from '@framework/module/settings.module';
 
 @Module({
   imports: [
@@ -12,15 +14,12 @@ import Logger from '@core/shared/logging';
       isGlobal: true,
       envFilePath: `/env/app/${setEnvironment()}`,
     }),
+    SettingsModule,
     DatabaseModule,
-    FightingModule,
+    LoggingModule,
+    FighterModule,
+    UsersModule,
+    EventsModule,
   ],
-  providers: [
-    {
-      provide: CoreDITokens.CoreLogger,
-      useFactory: (loggerService) => new Logger(loggerService),
-      inject: [NestLogger]
-    }
-  ]
 })
 export class RootModule {}

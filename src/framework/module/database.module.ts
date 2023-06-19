@@ -1,9 +1,10 @@
 import { Global, Module, OnApplicationBootstrap } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { initializeTransactionalContext } from 'typeorm-transactional-cls-hooked';
 import { TypeOrmLogger } from '@db/typeorm/logger';
 import { TypeOrmDirectory } from '@db/typeorm';
+import { addTransactionalDataSource, initializeTransactionalContext } from 'typeorm-transactional';
+import { DataSource } from 'typeorm';
 
 const getTypeOrmSettings = (config: ConfigService): TypeOrmModuleOptions => {
   const type = config.get('DATABASE_TYPE');
@@ -34,9 +35,17 @@ const getTypeOrmSettings = (config: ConfigService): TypeOrmModuleOptions => {
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory:  getTypeOrmSettings
+      useFactory(config: ConfigService) {
+        return getTypeOrmSettings(config);
+      },
+      dataSourceFactory(options): Promise<DataSource> {
+        if (!options) {
+          throw new Error('Invalid dataSource options passed');
+        }
+        return Promise.resolve(addTransactionalDataSource(new DataSource(options)));
+      }
     })
-  ]
+  ],
 })
 export class DatabaseModule implements OnApplicationBootstrap {
   onApplicationBootstrap(): void {

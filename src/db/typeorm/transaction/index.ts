@@ -1,10 +1,6 @@
 import { InputPort, OutputPort } from '@core/abstraction/interactor/interactor';
 import { TransactionalInteractor } from '@core/abstraction/interactor/transactional.interactor';
-import {
-  runOnTransactionCommit,
-  runOnTransactionRollback,
-  Transactional
-} from 'typeorm-transactional-cls-hooked';
+import { runOnTransactionCommit, runOnTransactionRollback, Transactional } from 'typeorm-transactional';
 
 export class TransactionalUseCaseWrapper<
   I extends InputPort,

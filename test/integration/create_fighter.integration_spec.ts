@@ -3,7 +3,7 @@ import { Test } from '@nestjs/testing';
 import FightingDITokens from '@core/domain/fighting/di';
 import { FighterDetailsDTO } from '@core/domain/fighting/dto/details';
 import { TestModule } from '@test/integration/test.module';
-import { CreateFighterInteractor } from '@core/application/fighting/event';
+import { CreateFighterInteractor } from '@core/domain/fighting/use_case/fighter/create_fighter';
 
 describe('Create Fighter Feature', () => {
   let app: INestApplication;
@@ -41,7 +41,7 @@ describe('Create Fighter Feature', () => {
     expect(created_fighter).toBeDefined();
     expect(created_fighter.id).toBeDefined();
     expect(created_fighter.stats).toBeDefined();
-    expect(created_fighter.stats.id).toBeDefined();
+    expect(created_fighter.stats.fighter_id).toBeDefined();
     expect(created_fighter.name).toEqual(fighter_details.name);
     expect(created_fighter.weight_class).toEqual(fighter_details.weight_class);
     expect(created_fighter.nationality).toEqual(fighter_details.nationality);

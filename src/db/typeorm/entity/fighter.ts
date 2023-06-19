@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, Relation } from 'typeorm';
 import { DBConfiguration } from '@db/typeorm/config';
 import FighterStatsDBEntity from '@db/typeorm/entity/fighter_stats';
 
@@ -22,7 +22,10 @@ export default class FighterDBEntity {
   @OneToOne(
     () => FighterStatsDBEntity,
     (stats) => stats.fighter,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+    }
   )
-  @JoinColumn({ name: 'fighterStatsId', referencedColumnName: 'id' })
-  public stats: FighterStatsDBEntity;
+  public stats: Relation<FighterStatsDBEntity>;
 }

@@ -1,5 +1,3 @@
-import { Inject } from '@nestjs/common';
-import FightingDITokens from '@core/domain/fighting/di';
 import {
   DeleteFighterGateway,
   DeleteFighterInputPort,
@@ -8,21 +6,20 @@ import {
 import CoreAssert from '@core/abstraction/assert';
 import { CoreException } from '@core/abstraction/exception/core.exception';
 import { Code } from '@core/abstraction/exception/type/code';
-import { FighterDTO } from '@core/domain/fighting/dto';
+import { FighterDTO } from '@core/domain/fighting/dto/dto';
 import { CoreLogger } from '@core/abstraction/logging';
-import CoreDITokens from '@core/abstraction/di';
 
 export default class DeleteFighterService implements DeleteFighterInteractor {
-  @Inject(CoreDITokens.CoreLogger)
-  private readonly logger: CoreLogger;
-
   constructor(
-    @Inject(FightingDITokens.FighterRepository)
     private readonly gateway: DeleteFighterGateway,
+    private readonly logger?: CoreLogger
   ) {}
 
   public async execute(input: DeleteFighterInputPort): Promise<DeleteFighterOutputPort> {
-    this.logger.debug(`⛔ Executing with params ${input}`, DeleteFighterService.name);
+    if (!!this.logger) {
+      this.logger.debug(`⛔ Executing with params ${input}`, DeleteFighterService.name);
+    }
+
     const fighter: FighterDTO = await this.gateway.findOneBy(input.params);
     CoreAssert.notEmpty(
       fighter,

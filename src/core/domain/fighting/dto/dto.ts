@@ -8,7 +8,7 @@ export interface FighterDTO {
 }
 
 export interface FighterStatsDTO {
-  id: number;
+  fighter_id: number;
   wins: number;
   losses: number;
   knockouts: number;

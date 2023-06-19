@@ -1,11 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
+import { Entity, Column, OneToOne, PrimaryColumn, JoinColumn } from 'typeorm';
 import FighterDBEntity from '@db/typeorm/entity/fighter';
 import { DBConfiguration } from '@db/typeorm/config';
 
 @Entity({ name: 'fighterStats', schema: DBConfiguration.SCHEMA })
 export default class FighterStatsDBEntity {
-  @PrimaryGeneratedColumn()
-  public id: number;
+  @PrimaryColumn({
+    name: 'fighterId'
+  })
+  public fighter_id: number;
 
   @Column({ nullable: false, default: 0 })
   public wins: number;
@@ -22,7 +24,9 @@ export default class FighterStatsDBEntity {
   @OneToOne(
     () => FighterDBEntity,
     (fighter) => fighter.stats,
-    { cascade: true }
   )
+  @JoinColumn({
+    name: 'fighterId', referencedColumnName: 'id'
+  })
   public fighter: FighterDBEntity;
 }

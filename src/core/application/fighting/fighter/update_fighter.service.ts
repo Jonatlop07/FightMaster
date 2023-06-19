@@ -2,7 +2,7 @@ import { Inject } from '@nestjs/common';
 import CoreDITokens from '@core/abstraction/di';
 import { CoreLogger } from '@core/abstraction/logging';
 import FightingDITokens from '@core/domain/fighting/di';
-import { FighterDTO } from '@core/domain/fighting/dto';
+import { FighterDTO } from '@core/domain/fighting/dto/dto';
 import CoreAssert from '@core/abstraction/assert';
 import { CoreException } from '@core/abstraction/exception/core.exception';
 import { Code } from '@core/abstraction/exception/type/code';

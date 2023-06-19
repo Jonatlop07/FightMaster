@@ -1,27 +1,31 @@
 import { CoreLogger } from '@core/abstraction/logging';
-import CoreDITokens from '@core/abstraction/di';
-import { Inject } from '@nestjs/common';
 import {
   CreateEntityGateway,
   CreateEntityInputPort,
   CreateEntityInteractor, CreateEntityOutputPort
 } from '@core/domain/fighting/use_case/create_entity';
-import { EntityNames } from '@core/domain/fighting/entity/entity_names';
+import { EntityName } from '@core/domain/fighting/entity/entity_name';
+import { toPrettyJsonString } from '@core/abstraction/format';
 
 export default class CreateEntityService<EntityDetailsDTO, EntityDTO>
   implements CreateEntityInteractor<EntityDetailsDTO, EntityDTO> {
 
-  @Inject(CoreDITokens.CoreLogger)
-  private readonly logger: CoreLogger;
-
   constructor(
     private readonly gateway: CreateEntityGateway<EntityDetailsDTO, EntityDTO>,
-    private readonly entity_name: EntityNames,
+    private readonly entity_name: EntityName,
+    private readonly logger: CoreLogger
   ) {}
 
   public async execute(input: CreateEntityInputPort<EntityDetailsDTO>): Promise<CreateEntityOutputPort<EntityDTO>> {
-    this.logger.debug(`➕ Executing with params ${input}`, `Create${this.entity_name}Service`);
+    this.logger.log(
+      `➕ Entity to create: ${toPrettyJsonString(input)}`,
+      `Create${this.entity_name}Service`
+    );
     const created_entity = await this.gateway.create(input.entity_details);
+    this.logger.log(
+      `➕ Created entity: ${toPrettyJsonString(created_entity)}`,
+      `Create${this.entity_name}Service`
+    );
     return { created_entity };
   }
 }

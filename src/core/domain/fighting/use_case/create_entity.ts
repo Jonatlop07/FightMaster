@@ -1,5 +1,6 @@
-import { InputPort, Interactor, OutputPort } from '@core/abstraction/interactor/interactor';
+import { InputPort, OutputPort } from '@core/abstraction/interactor/interactor';
 import { Create } from '@core/abstraction/persistence';
+import { TransactionalInteractor } from '@core/abstraction/interactor/transactional.interactor';
 
 interface CreateEntityInputPort<EntityDetailsDTO> extends InputPort {
   entity_details: EntityDetailsDTO;
@@ -10,7 +11,7 @@ interface CreateEntityOutputPort<EntityDTO> extends OutputPort {
 }
 
 interface CreateEntityInteractor<EntityDetailsDTO, EntityDTO>
-  extends Interactor<
+  extends TransactionalInteractor<
   CreateEntityInputPort<EntityDetailsDTO>,
   CreateEntityOutputPort<EntityDTO>
   > {}

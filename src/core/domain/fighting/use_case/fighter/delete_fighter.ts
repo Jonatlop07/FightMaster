@@ -1,5 +1,5 @@
 import { InputPort, Interactor, OutputPort } from '@core/abstraction/interactor/interactor';
-import { FighterDTO } from '@core/domain/fighting/dto';
+import { FighterDTO } from '@core/domain/fighting/dto/dto';
 import { Delete, FindOne } from '@core/abstraction/persistence';
 import { FighterFilterParamsDTO } from '@core/domain/fighting/dto/filter_params';
 
