@@ -80,8 +80,8 @@ import { DeleteFightInteractor } from '@core/domain/fighting/use_case/fight/dele
 @Controller('events')
 @ApiTags('events')
 export class EventsController {
-  private static readonly entity_name: EntityName.Event;
-  private static readonly fight_entity_name: EntityName.Fight;
+  private static readonly entity_name: EntityName = EntityName.Event;
+  private static readonly fight_entity_name: EntityName =  EntityName.Fight;
 
   constructor(
     @Inject(FightingDITokens.CreateEventInteractor)
@@ -172,7 +172,7 @@ export class EventsController {
           return {
             ...event,
             fights: entities
-          }
+          };
         }
       )
     );

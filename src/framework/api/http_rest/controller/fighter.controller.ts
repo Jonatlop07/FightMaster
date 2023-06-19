@@ -54,7 +54,7 @@ import { DeleteFighterMapper, DeleteFighterResponse } from '@framework/api/http_
 @Controller('fighters')
 @ApiTags('fighters')
 export class FighterController {
-  private static readonly entity_name: EntityName.Fighter;
+  private static readonly entity_name: EntityName =  EntityName.Fighter;
 
   constructor(
     @Inject(FightingDITokens.CreateFighterInteractor)
