@@ -1,28 +1,31 @@
 import { Entity } from '@core/abstraction/entity';
 import { IsInt } from 'class-validator';
 import { CreateFightEntityPayload } from '@core/domain/fighting/entity/payload';
+import { Nullable } from '@core/abstraction/type';
+import { Event } from '@core/domain/fighting/entity/event';
+import { Fighter } from '@core/domain/fighting/entity/fighter';
 
 export class Fight extends Entity<number> {
 
   @IsInt()
-  private readonly event_id: number;
+  private readonly event: Event;
 
   @IsInt()
-  private readonly fighter1_id: number;
+  private readonly fighter1: Fighter;
 
   @IsInt()
-  private readonly fighter2_id: number;
+  private readonly fighter2: Fighter;
 
   @IsInt()
-  private readonly winner_id: number;
+  private readonly winner: Nullable<Fighter>;
 
   constructor(payload: CreateFightEntityPayload) {
     super();
     this.id = payload.id;
-    this.event_id = payload.event_id;
-    this.fighter1_id = payload.fighter1_id;
-    this.fighter2_id = payload.fighter2_id;
-    this.winner_id = payload.winner_id;
+    this.event = payload.event;
+    this.fighter1 = payload.fighter1;
+    this.fighter2 = payload.fighter2;
+    this.winner = payload.winner;
   }
 
   public static async new(payload: CreateFightEntityPayload): Promise<Fight> {
@@ -31,19 +34,19 @@ export class Fight extends Entity<number> {
     return fight;
   }
 
-  public getEventId(): number {
-    return this.event_id;
+  public getEvent(): Event {
+    return this.event;
   }
 
-  public getFighter1Id(): number {
-    return this.fighter1_id;
+  public getFighter1(): Fighter {
+    return this.fighter1;
   }
 
-  public getFighter2Id(): number {
-    return this.fighter2_id;
+  public getFighter2(): Fighter {
+    return this.fighter2;
   }
 
-  public getWinnerId(): number {
-    return this.winner_id;
+  public getWinnerId(): Fighter {
+    return this.winner;
   }
 }

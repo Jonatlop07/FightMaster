@@ -1,4 +1,7 @@
 import { FighterStats } from '@core/domain/fighting/entity/fighter_stats';
+import { Nullable } from '@core/abstraction/type';
+import { Event } from '@core/domain/fighting/entity/event';
+import { Fighter } from '@core/domain/fighting/entity/fighter';
 
 export type CreateFighterEntityPayload = {
   id: number;
@@ -19,10 +22,10 @@ export type CreateFighterStatsPayload = {
 
 export type CreateFightEntityPayload = {
   id: number;
-  event_id: number;
-  fighter1_id: number;
-  fighter2_id: number;
-  winner_id: number;
+  event: Event;
+  fighter1: Fighter;
+  fighter2: Fighter;
+  winner: Nullable<Fighter>;
 };
 
 export type CreateEventEntityPayload = {

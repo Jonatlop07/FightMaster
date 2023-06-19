@@ -19,6 +19,14 @@ export class UpdateFighterRequestFighterStats {
   @IsNumber()
   @ApiProperty({type: 'number'})
   public submissions: number;
+
+  @IsNumber()
+  @ApiProperty({type: 'number'})
+  public tech_knockouts: number;
+
+  @IsNumber()
+  @ApiProperty({type: 'number'})
+  public by_decision: number;
 }
 
 export class UpdateFighterRequestBody {

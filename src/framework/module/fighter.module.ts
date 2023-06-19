@@ -21,7 +21,6 @@ import { UpdateFighterGateway, UpdateFighterInteractor } from '@core/domain/figh
 import UpdateEntityService from '@core/application/update_entity.service';
 import { DeleteFighterGateway, DeleteFighterInteractor } from '@core/domain/fighting/use_case/fighter/delete_fighter';
 import DeleteEntityService from '@core/application/delete_entity.service';
-import { FighterStatsTypeOrmRepository } from '@db/typeorm/repository';
 import FighterStatsDBEntity from '@db/typeorm/entity/fighter_stats';
 
 const providers: Array<Provider> = [
@@ -105,6 +104,9 @@ const providers: Array<Provider> = [
 @Module({
   imports: [TypeOrmModule.forFeature([FighterDBEntity, FighterStatsDBEntity])],
   providers,
+  exports: [
+    FightingDITokens.FighterRepository
+  ],
   controllers: [FighterController]
 })
 export class FighterModule {}

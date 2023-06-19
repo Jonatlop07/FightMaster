@@ -33,6 +33,8 @@ import { DeleteFightGateway, DeleteFightInteractor } from '@core/domain/fighting
 import { UpdateFightGateway, UpdateFightInteractor } from '@core/domain/fighting/use_case/fight/update_fight';
 import { QueryFightsGateway } from '@core/domain/fighting/use_case/fight/query_fights';
 import { QueryFightGateway } from '@core/domain/fighting/use_case/fight/query_fight';
+import UpdateFightService from '@core/application/fight/update_fight.service';
+import { QueryFighterGateway } from '@core/domain/fighting/use_case/fighter/query_fighter';
 
 const event_feature_providers = [
   {
@@ -152,15 +154,23 @@ const fight_feature_providers: Array<Provider> = [
   },
   {
     provide: FightingDITokens.UpdateFightInteractor,
-    useFactory: (gateway: UpdateFightGateway, logger: CoreLogger) => {
-      const interactor: UpdateFightInteractor = new UpdateEntityService<FightDTO>(
+    useFactory: (
+      gateway: UpdateFightGateway,
+      fighter_gateway: QueryFighterGateway,
+      logger: CoreLogger
+    ) => {
+      const interactor: UpdateFightInteractor = new UpdateFightService(
         gateway,
-        EntityName.Fight,
+        fighter_gateway,
         logger
       );
       return new TransactionalUseCaseWrapper(interactor);
     },
-    inject: [FightingDITokens.FightRepository, CoreDITokens.CoreLogger]
+    inject: [
+      FightingDITokens.FightRepository,
+      FightingDITokens.FighterRepository,
+      CoreDITokens.CoreLogger
+    ]
   },
   {
     provide: FightingDITokens.DeleteFightInteractor,

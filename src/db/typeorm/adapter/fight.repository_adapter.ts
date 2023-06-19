@@ -129,31 +129,26 @@ export class FightTypeOrmRepositoryAdapter implements FightRepository {
     return exists;
   }
 
-  public async update(fight_with_updates: FightDTO): Promise<FightDTO> {
+  public async partialUpdate(previous: FightDTO, next: Partial<FightDTO>): Promise<FightDTO> {
     this.logger.log(
-      `📝  The ${FightTypeOrmRepositoryAdapter.entity_name} updates: ${toPrettyJsonString(fight_with_updates)}`,
+      `📝  The ${FightTypeOrmRepositoryAdapter.entity_name} updates: ${toPrettyJsonString(next)}`,
       FightTypeOrmRepositoryAdapter.name
     );
-    const event_entity = await this.findEventById(fight_with_updates.event_id);
-    const fighter1_entity: FighterDBEntity = await this.findFighterById(fight_with_updates.fighter1_id);
-    const fighter2_entity: FighterDBEntity = await this.findFighterById(fight_with_updates.fighter2_id);
-    const winner_entity: Optional<FighterDBEntity> = fight_with_updates.winner_id
-      ? await this.findFighterById(fight_with_updates.winner_id)
-      : undefined;
     const fight_to_save: FightDBEntity = FightMapper.fromDTO(
-      event_entity,
-      fighter1_entity,
-      fighter2_entity,
-      fight_with_updates,
-      winner_entity,
+      {
+        id: previous.id,
+        fighter1: previous.fighter1,
+        fighter2: previous.fighter2,
+        event: previous.event,
+        winner: next.winner
+      }
     );
-    await this.repository.save(fight_to_save);
-    const updated_fight = await this.findOneBy({ id: fight_with_updates.id });
+    const updated_fight = await this.repository.save(fight_to_save);
     this.logger.log(
       `📝  The ${FightTypeOrmRepositoryAdapter.entity_name} updated: ${toPrettyJsonString(updated_fight)}`,
       FightTypeOrmRepositoryAdapter.name
     );
-    return updated_fight;
+    return FightMapper.fromDBEntity(updated_fight);
   }
 
   public async findAll(params: FightsFilterParamsDTO): Promise<Array<FightDTO>> {

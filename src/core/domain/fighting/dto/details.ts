@@ -11,6 +11,8 @@ export interface FighterStatsDetailsDTO {
   losses: number;
   knockouts: number;
   submissions: number;
+  tech_knockouts: number;
+  by_decision: number;
 }
 
 export interface EventDetailsDTO {
@@ -24,4 +26,10 @@ export interface FightDetailsDTO {
   fighter1_id: number;
   fighter2_id: number;
   winner_id: number;
+}
+
+export interface UpdateFightDetailsDTO {
+  id: number;
+  winner_id: number;
+
 }

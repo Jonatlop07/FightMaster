@@ -44,6 +44,8 @@ export class FighterMapper {
     stats_entity.losses = dto.stats.losses;
     stats_entity.knockouts = dto.stats.knockouts;
     stats_entity.submissions = dto.stats.submissions;
+    stats_entity.tech_knockouts = dto.stats.tech_knockouts;
+    stats_entity.by_decision = dto.stats.by_decision;
     stats_entity.fighter = fighter_entity;
     return fighter_entity;
   }
@@ -55,6 +57,8 @@ export class FighterMapper {
       losses: input.losses,
       knockouts: input.knockouts,
       submissions: input.submissions,
+      tech_knockouts: input.tech_knockouts,
+      by_decision: input.by_decision
     };
     return stats_dto;
   }

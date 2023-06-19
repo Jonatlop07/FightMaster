@@ -425,7 +425,7 @@ export class EventsController {
       EventsController.name
     );
     const output = await this.update_fight_interactor.execute(
-      UpdateFightMapper.toInputPort(event_id, fight_id, body)
+      UpdateFightMapper.toInputPort(fight_id, body)
     );
     const response = CoreResponse.success(
       UpdateFightMapper.toResponse(output)

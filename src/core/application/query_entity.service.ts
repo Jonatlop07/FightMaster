@@ -32,7 +32,7 @@ export default class QueryEntityService<EntityFilterParamsDTO, EntityDTO>
         code: Code.ENTITY_NOT_FOUND_ERROR,
         override_message: `${this.entity_name} not found.`
       })
-    )
+    );
     this.logger.log(
       `🔎 ${this.entity_name}: ${toPrettyJsonString(entity)}`,
       `Query${this.entity_name}sService`

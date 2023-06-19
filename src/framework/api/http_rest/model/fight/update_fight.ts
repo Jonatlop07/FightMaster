@@ -23,14 +23,11 @@ export interface UpdateFightResponse {
 }
 
 export class UpdateFightMapper {
-  public static toInputPort(event_id: number, fight_id: number, request: UpdateFightRequestBody): UpdateFightInputPort {
+  public static toInputPort(fight_id: number, request: UpdateFightRequestBody): UpdateFightInputPort {
     return {
-      entity_with_updates: {
-        event_id,
+      update_details: {
         id: fight_id,
-        fighter1_id: request.fighter1_id,
-        fighter2_id: request.fighter2_id,
-        winner_id: request.winner_id,
+        winner_id: request.winner_id
       }
     };
   }

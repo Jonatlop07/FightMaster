@@ -21,6 +21,12 @@ export default class FighterStatsDBEntity {
   @Column({ nullable: false, default: 0 })
   public submissions: number;
 
+  @Column({ name: 'techKnockouts', nullable: false, default: 0 })
+  public tech_knockouts: number;
+
+  @Column({ name:'byDecision', nullable: false, default: 0 })
+  public by_decision: number;
+
   @OneToOne(
     () => FighterDBEntity,
     (fighter) => fighter.stats,

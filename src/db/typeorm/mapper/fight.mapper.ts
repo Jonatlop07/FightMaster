@@ -4,15 +4,17 @@ import { FightDetailsDTO } from '@core/domain/fighting/dto/details';
 import EventDBEntity from '@db/typeorm/entity/event';
 import FighterDBEntity from '@db/typeorm/entity/fighter';
 import { Optional } from '@core/abstraction/type';
+import { EventMapper } from '@db/typeorm/mapper/event.mapper';
+import { FighterMapper } from '@db/typeorm/mapper/fighter.mapper';
 
 export class FightMapper {
   public static fromDBEntity(input: FightDBEntity): FightDTO {
     return {
       id: input.id,
-      event_id: input.event.id,
-      fighter1_id: input.fighter1.id,
-      fighter2_id: input.fighter2.id,
-      winner_id: !!input.winner ? input.winner.id : null
+      event: EventMapper.fromDTO(input.event),
+      fighter1: FighterMapper.fromDBEntity(input.fighter1),
+      fighter2: FighterMapper.fromDBEntity(input.fighter2),
+      winner: !!input.winner ? FighterMapper.fromDBEntity(input.winner) : null
     };
   }
 
@@ -32,18 +34,14 @@ export class FightMapper {
   }
 
   public static fromDTO(
-    event: EventDBEntity,
-    fighter1: FighterDBEntity,
-    fighter2: FighterDBEntity,
-    dto: FightDTO,
-    winner?: Optional<FighterDBEntity>,
+    fight_dto: FightDTO,
   ): FightDBEntity {
     return {
-      id: dto.id,
-      fighter1,
-      fighter2,
-      winner,
-      event
+      id: fight_dto.id,
+      fighter1: FighterMapper.fromDTO(fight_dto.fighter1),
+      fighter2: FighterMapper.fromDTO(fight_dto.fighter2),
+      winner: !!fight_dto.winner ? FighterMapper.fromDTO(fight_dto.winner) : null,
+      event: EventMapper.fromDTO(fight_dto.event)
     };
   }
 }

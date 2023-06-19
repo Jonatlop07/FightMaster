@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS fight_master_db.fighterStats (
     losses INT CHECK (losses >= 0),
     knockouts INT CHECK (knockouts >= 0),
     submissions INT CHECK (submissions >= 0),
+    techKnockouts INT CHECK (techKnockouts >= 0),
+    byDecision INT CHECK (byDecision >= 0),
     FOREIGN KEY (fighterId) REFERENCES fight_master_db.fighter (id)
 );
 
