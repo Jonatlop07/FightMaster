@@ -11,7 +11,7 @@ export class FightMapper {
   public static fromDBEntity(input: FightDBEntity): FightDTO {
     return {
       id: input.id,
-      event: EventMapper.fromDTO(input.event),
+      event: EventMapper.fromDBEntity(input.event),
       fighter1: FighterMapper.fromDBEntity(input.fighter1),
       fighter2: FighterMapper.fromDBEntity(input.fighter2),
       winner: !!input.winner ? FighterMapper.fromDBEntity(input.winner) : null

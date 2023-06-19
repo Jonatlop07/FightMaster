@@ -198,11 +198,15 @@ export class FightTypeOrmRepositoryAdapter implements FightRepository {
   private async findAllByFilterParams(
     { event_id, fighter_id, winner_id }: FightsFilterParamsDTO
   ): Promise<Array<FightDBEntity>> {
+    const stats_alias1 = 'stats1';
+    const stats_alias2 = 'stats2';
     const query_builder = this.repository.createQueryBuilder(entity_alias)
       .leftJoinAndSelect(`${entity_alias}.${entity_fields.event}`, entity_fields.event)
       .leftJoinAndSelect(`${entity_alias}.${entity_fields.fighter1}`, entity_fields.fighter1)
       .leftJoinAndSelect(`${entity_alias}.${entity_fields.fighter2}`, entity_fields.fighter2)
-      .leftJoinAndSelect(`${entity_alias}.${entity_fields.winner}`, entity_fields.winner);
+      .leftJoinAndSelect(`${entity_alias}.${entity_fields.winner}`, entity_fields.winner)
+      .leftJoinAndSelect(`${entity_fields.fighter1}.${fighter_fields.stats.alias}`, stats_alias1)
+      .leftJoinAndSelect(`${entity_fields.fighter2}.${fighter_fields.stats.alias}`, stats_alias2);
     const id_field = 'id';
     if (event_id) {
       query_builder.orWhere(`${entity_fields.event}.${id_field} = :${id_field}`,

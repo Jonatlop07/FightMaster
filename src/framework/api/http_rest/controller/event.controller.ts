@@ -159,8 +159,27 @@ export class EventsController {
     const output = await this.query_events_interactor.execute(
       QueryEventsMapper.toInputPort(query)
     );
+    const events = await Promise.all(
+      output.entities.map(
+        async (event) => {
+          const { entities } = await this.query_fights_interactor.execute(
+            {
+              filter_params: {
+                event_id: event.id
+              }
+            }
+          );
+          return {
+            ...event,
+            fights: entities
+          }
+        }
+      )
+    );
     const response = CoreResponse.success(
-      QueryEventsMapper.toResponse(output)
+      {
+        events
+      }
     );
     this.logger.log(
       `🔎 QueryEvents response: ${toPrettyJsonString(response)}`,
@@ -187,15 +206,22 @@ export class EventsController {
       `🔎 QueryEvent event_id: ${toPrettyJsonString(event_id)}`,
       EventsController.name
     );
-    const output = await this.query_event_interactor.execute(
-      {
-        filter_params: {
-          id: event_id
+    const [query_event_output, query_fights_output] = await Promise.all([
+      await this.query_event_interactor.execute(
+        {
+          filter_params: {
+            id: event_id
+          }
         }
-      }
-    );
+      ),
+      await this.query_fights_interactor.execute({
+        filter_params: {
+          event_id
+        }
+      })
+    ]);
     const response = CoreResponse.success(
-      QueryEventMapper.toResponse(output)
+      QueryEventMapper.toResponse(query_event_output, query_fights_output)
     );
     this.logger.log(
       `🔎 QueryEvent response: ${toPrettyJsonString(response)}`,

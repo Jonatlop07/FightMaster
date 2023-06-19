@@ -2,7 +2,7 @@ import { IsDate, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Optional } from '@core/abstraction/type';
 import { QueryEventsInputPort, QueryEventsOutputPort } from '@core/domain/fighting/use_case/event/query_events';
-import { EventDTO } from '@core/domain/fighting/dto/dto';
+import { EventDTO, FightDTO } from '@core/domain/fighting/dto/dto';
 import { EventsFilterParamsDTO } from '@core/domain/fighting/dto/filter_params';
 
 export class QueryEventsRequestQuery {
@@ -32,8 +32,16 @@ export class QueryEventsRequestQuery {
   public offset: Optional<number>;
 }
 
+export interface QueryEventsResponsePayload {
+  id: number,
+  name: string,
+  location: string,
+  date: Date,
+  fights: Array<FightDTO>
+}
+
 export interface QueryEventsResponse {
-  events: Array<EventDTO>;
+  events: Array<QueryEventsResponsePayload>
 }
 
 export class QueryEventsMapper {
@@ -51,12 +59,6 @@ export class QueryEventsMapper {
     }
     return {
       filter_params
-    };
-  }
-
-  public static toResponse(output: QueryEventsOutputPort): QueryEventsResponse {
-    return {
-      events: output.entities
     };
   }
 }
