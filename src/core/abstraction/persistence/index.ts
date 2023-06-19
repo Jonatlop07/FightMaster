@@ -1,5 +1,6 @@
 import { Nullable } from '@core/abstraction/type';
 import { IsNumber, IsOptional, IsPositive } from 'class-validator';
+import { FilterWithPagination } from '@core/domain/fighting/dto/filter_params';
 
 export class Pagination {
   @IsNumber() @IsOptional() @IsPositive() limit;
@@ -10,16 +11,16 @@ export interface Create<EntityDetailsDTO, EntityDTO> {
   create(c: EntityDetailsDTO): Promise<EntityDTO>;
 }
 
-export interface Exists<EntityFilterParamsDTO> {
-  exists(params: EntityFilterParamsDTO): Promise<boolean>;
+export interface Exists {
+  exists(id: number): Promise<boolean>;
 }
 
 export interface FindOne<EntityFilterParamsDTO, EntityDTO> {
   findOneBy(params: EntityFilterParamsDTO): Promise<Nullable<EntityDTO>>;
 }
 
-export interface FindAll<EntityFilterParamsDTO, EntityDTO> {
-  findAll(params: EntityFilterParamsDTO, pagination?: Pagination): Promise<EntityDTO[]>;
+export interface FindAll<EntityFilterParamsDTO extends FilterWithPagination, EntityDTO> {
+  findAll(params: EntityFilterParamsDTO): Promise<EntityDTO[]>;
 }
 
 export interface Update<EntityDTO> {

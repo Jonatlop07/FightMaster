@@ -1,26 +1,13 @@
-import { InputPort, Interactor, OutputPort } from '@core/abstraction/interactor/interactor';
-import { FighterDTO } from '@core/domain/fighting/dto/dto';
-import { Delete, FindOne } from '@core/abstraction/persistence';
+import {
+  DeleteEntityGateway,
+  DeleteEntityInputPort,
+  DeleteEntityInteractor,
+  DeleteEntityOutputPort
+} from '@core/domain/fighting/use_case/delete_entity';
 import { FighterFilterParamsDTO } from '@core/domain/fighting/dto/filter_params';
+import { FighterDTO } from '@core/domain/fighting/dto/dto';
 
-interface DeleteFighterInputPort extends InputPort {
-  params: FighterFilterParamsDTO;
-}
-
-interface DeleteFighterOutputPort extends OutputPort {
-  deleted_fighter: FighterDTO;
-}
-
-interface DeleteFighterInteractor
-  extends Interactor<DeleteFighterInputPort, DeleteFighterOutputPort> {}
-
-interface DeleteFighterGateway extends
-  FindOne<FighterFilterParamsDTO, FighterDTO>,
-  Delete<FighterFilterParamsDTO, FighterDTO> {}
-
-export {
-  DeleteFighterInputPort,
-  DeleteFighterOutputPort,
-  DeleteFighterInteractor,
-  DeleteFighterGateway,
-};
+export type DeleteFighterInteractor = DeleteEntityInteractor<FighterFilterParamsDTO, FighterDTO>;
+export type DeleteFighterInputPort = DeleteEntityInputPort<FighterFilterParamsDTO>;
+export type DeleteFighterOutputPort = DeleteEntityOutputPort<FighterDTO>;
+export type DeleteFighterGateway = DeleteEntityGateway<FighterFilterParamsDTO, FighterDTO>;

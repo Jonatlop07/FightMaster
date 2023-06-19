@@ -1,24 +1,13 @@
-import { InputPort, Interactor, OutputPort } from '@core/abstraction/interactor/interactor';
+import {
+  UpdateEntityGateway,
+  UpdateEntityInputPort,
+  UpdateEntityInteractor,
+  UpdateEntityOutputPort
+} from '@core/domain/fighting/use_case/update_entity';
 import { EventDTO } from '@core/domain/fighting/dto/dto';
-import { Exists, Update } from '@core/abstraction/persistence';
-import { EventFilterParamsDTO } from '@core/domain/fighting/dto/filter_params';
 
-interface UpdateEventInputPort extends InputPort {
-  event_with_updates: EventDTO;
-}
+export type UpdateEventInteractor = UpdateEntityInteractor<EventDTO>;
+export type UpdateEventInputPort = UpdateEntityInputPort<EventDTO>;
+export type UpdateEventOutputPort = UpdateEntityOutputPort<EventDTO>;
+export type UpdateEventGateway = UpdateEntityGateway<EventDTO>;
 
-interface UpdateEventOutputPort extends OutputPort {
-  updated_event: EventDTO;
-}
-
-interface UpdateEventInteractor
-  extends Interactor<UpdateEventInputPort, UpdateEventOutputPort> {}
-
-interface UpdateEventGateway extends Exists<EventFilterParamsDTO>, Update<EventDTO> {}
-
-export {
-  UpdateEventInputPort,
-  UpdateEventOutputPort,
-  UpdateEventInteractor,
-  UpdateEventGateway,
-};

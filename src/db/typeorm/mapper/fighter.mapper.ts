@@ -3,8 +3,8 @@ import FighterDBEntity from '@db/typeorm/entity/fighter';
 import FighterStatsDBEntity from '@db/typeorm/entity/fighter_stats';
 import { FighterDetailsDTO } from '@core/domain/fighting/dto/details';
 
-export class Mapper {
-  public static fromFighterDBEntity(input: FighterDBEntity): FighterDTO {
+export class FighterMapper {
+  public static fromDBEntity(input: FighterDBEntity): FighterDTO {
     const fighter_dto: FighterDTO = {
       id: input.id,
       name: input.name,
@@ -16,7 +16,7 @@ export class Mapper {
     return fighter_dto;
   }
 
-  public static fromFighterDetailsDTO(details_dto: FighterDetailsDTO): FighterDBEntity {
+  public static fromDetailsDTO(details_dto: FighterDetailsDTO): FighterDBEntity {
     const stats_entity = new FighterStatsDBEntity();
     stats_entity.wins = details_dto.stats.wins;
     stats_entity.losses = details_dto.stats.losses;
@@ -31,7 +31,7 @@ export class Mapper {
     return fighter_entity;
   }
 
-  public static fromFighterDTO(dto: FighterDTO): FighterDBEntity {
+  public static fromDTO(dto: FighterDTO): FighterDBEntity {
     const fighter_entity = new FighterDBEntity();
     fighter_entity.id = dto.id;
     fighter_entity.name = dto.name;

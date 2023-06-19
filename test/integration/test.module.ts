@@ -6,7 +6,7 @@ import { TypeOrmLogger } from '@db/typeorm/logger';
 import FighterStatsDBEntity from '@db/typeorm/entity/fighter_stats';
 import { FighterTypeOrmRepository } from '@db/typeorm/repository';
 import FightingDITokens from '@core/domain/fighting/di';
-import CreateEntityService from '@core/application/fighting/create_entity.service';
+import CreateEntityService from '@core/application/create_entity.service';
 import { FighterDetailsDTO } from '@core/domain/fighting/dto/details';
 import { FighterDTO } from '@core/domain/fighting/dto/dto';
 import { EntityName } from '@core/domain/fighting/entity/entity_name';

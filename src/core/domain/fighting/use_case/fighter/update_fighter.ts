@@ -1,24 +1,13 @@
-import { InputPort, Interactor, OutputPort } from '@core/abstraction/interactor/interactor';
+import {
+  UpdateEntityGateway,
+  UpdateEntityInputPort,
+  UpdateEntityInteractor,
+  UpdateEntityOutputPort
+} from '@core/domain/fighting/use_case/update_entity';
 import { FighterDTO } from '@core/domain/fighting/dto/dto';
-import { Exists, Update } from '@core/abstraction/persistence';
-import { FighterFilterParamsDTO } from '@core/domain/fighting/dto/filter_params';
 
-interface UpdateFighterInputPort extends InputPort {
-  fighter_with_updates: FighterDTO;
-}
+export type UpdateFighterInteractor = UpdateEntityInteractor<FighterDTO>;
+export type UpdateFighterInputPort = UpdateEntityInputPort<FighterDTO>;
+export type UpdateFighterOutputPort = UpdateEntityOutputPort<FighterDTO>;
+export type UpdateFighterGateway = UpdateEntityGateway<FighterDTO>;
 
-interface UpdateFighterOutputPort extends OutputPort {
-  updated_fighter: FighterDTO;
-}
-
-interface UpdateFighterInteractor
-  extends Interactor<UpdateFighterInputPort, UpdateFighterOutputPort> {}
-
-interface UpdateFighterGateway extends Exists<FighterFilterParamsDTO>, Update<FighterDTO> {}
-
-export {
-  UpdateFighterInputPort,
-  UpdateFighterOutputPort,
-  UpdateFighterInteractor,
-  UpdateFighterGateway,
-};

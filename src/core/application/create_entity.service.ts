@@ -18,12 +18,12 @@ export default class CreateEntityService<EntityDetailsDTO, EntityDTO>
 
   public async execute(input: CreateEntityInputPort<EntityDetailsDTO>): Promise<CreateEntityOutputPort<EntityDTO>> {
     this.logger.log(
-      `➕ Entity to create: ${toPrettyJsonString(input)}`,
+      `➕ ${this.entity_name} to create: ${toPrettyJsonString(input)}`,
       `Create${this.entity_name}Service`
     );
     const created_entity = await this.gateway.create(input.entity_details);
     this.logger.log(
-      `➕ Created entity: ${toPrettyJsonString(created_entity)}`,
+      `➕ Created ${this.entity_name}: ${toPrettyJsonString(created_entity)}`,
       `Create${this.entity_name}Service`
     );
     return { created_entity };
