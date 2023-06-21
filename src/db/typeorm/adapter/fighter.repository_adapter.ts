@@ -16,6 +16,7 @@ import { toPrettyJsonString } from '@core/abstraction/format';
 import { FighterMapper } from '@db/typeorm/mapper/fighter.mapper';
 import { EntityName } from '@core/domain/fighting/entity/entity_name';
 import FighterStatsDBEntity from '@db/typeorm/entity/fighter_stats';
+import { FighterTypeOrmRepository } from '@db/typeorm/repository';
 
 const entity_alias = 'fighter';
 const entity_fields = {
@@ -35,7 +36,7 @@ export class FighterTypeOrmRepositoryAdapter implements FighterRepository {
 
   constructor(
     @InjectRepository(FighterDBEntity)
-    private readonly repository: Repository<FighterDBEntity>,
+    private readonly repository: FighterTypeOrmRepository,
     @InjectRepository(FighterStatsDBEntity)
     private readonly fighter_stats_repository: Repository<FighterStatsDBEntity>,
     @Inject(CoreDITokens.CoreLogger)

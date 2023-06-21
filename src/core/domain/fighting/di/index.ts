@@ -18,4 +18,7 @@ export default class FightingDITokens {
   public static readonly FighterStatsRepository: unique symbol = Symbol('FighterStatsRepository');
   public static readonly EventRepository: unique symbol = Symbol('EventRepository');
   public static readonly FightRepository: unique symbol = Symbol('FightRepository');
+  public static readonly FighterFacade: unique symbol = Symbol('FighterFacade');
+  public static readonly EventFacade: unique symbol = Symbol('EventFacade');
+  public static readonly FightFacade: unique symbol = Symbol('FightFacade');
 }

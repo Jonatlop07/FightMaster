@@ -12,18 +12,26 @@ import CoreDITokens from '@core/abstraction/di';
 import FighterDBEntity from '@db/typeorm/entity/fighter';
 import { FighterTypeOrmRepositoryAdapter } from '@db/typeorm/adapter/fighter.repository_adapter';
 import { TransactionalUseCaseWrapper } from '@db/typeorm/transaction';
-import { QueryFighterGateway } from '@core/domain/fighting/use_case/fighter/query_fighter';
+import { QueryFighterGateway, QueryFighterInteractor } from '@core/domain/fighting/use_case/fighter/query_fighter';
 import QueryEntityService from '@core/application/query_entity.service';
 import { FighterFilterParamsDTO, FightersFilterParamsDTO } from '@core/domain/fighting/dto/filter_params';
-import { QueryFightersGateway } from '@core/domain/fighting/use_case/fighter/query_fighters';
+import { QueryFightersGateway, QueryFightersInteractor } from '@core/domain/fighting/use_case/fighter/query_fighters';
 import QueryEntitiesService from '@core/application/query_entities.service';
 import { UpdateFighterGateway, UpdateFighterInteractor } from '@core/domain/fighting/use_case/fighter/update_fighter';
 import UpdateEntityService from '@core/application/update_entity.service';
 import { DeleteFighterGateway, DeleteFighterInteractor } from '@core/domain/fighting/use_case/fighter/delete_fighter';
 import DeleteEntityService from '@core/application/delete_entity.service';
 import FighterStatsDBEntity from '@db/typeorm/entity/fighter_stats';
+import { FighterFacadeImpl } from '@core/application/fighter/fighter.facade_impl';
 
-const providers: Array<Provider> = [
+const persistence_providers: Array<Provider> = [
+  {
+    provide: FightingDITokens.FighterRepository,
+    useClass: FighterTypeOrmRepositoryAdapter,
+  },
+];
+
+const interactor_providers: Array<Provider> = [
   {
     provide: FightingDITokens.CreateFighterInteractor,
     useFactory: (gateway: CreateFighterGateway, logger: CoreLogger) => {
@@ -95,17 +103,50 @@ const providers: Array<Provider> = [
     },
     inject: [FightingDITokens.FighterRepository, CoreDITokens.CoreLogger]
   },
+];
+
+const facade_providers: Array<Provider> = [
   {
-    provide: FightingDITokens.FighterRepository,
-    useClass: FighterTypeOrmRepositoryAdapter,
+    provide: FightingDITokens.FighterFacade,
+    useFactory: (
+      q: QueryFighterInteractor,
+      qs: QueryFightersInteractor,
+      c: CreateFighterInteractor,
+      u: UpdateFighterInteractor,
+      d: DeleteFighterInteractor,
+      l: CoreLogger
+    ) =>
+      new FighterFacadeImpl(
+        {
+          delete_fighter_interactor: d,
+          update_fighter_interactor: u,
+          create_fighter_interactor: c,
+          query_fighters_interactor: qs,
+          query_fighter_interactor: q,
+          logger: l
+        }
+      ),
+    inject: [
+      FightingDITokens.QueryFighterInteractor,
+      FightingDITokens.QueryFightersInteractor,
+      FightingDITokens.CreateFighterInteractor,
+      FightingDITokens.UpdateFighterInteractor,
+      FightingDITokens.DeleteFighterInteractor,
+      CoreDITokens.CoreLogger
+    ]
   },
 ];
 
 @Module({
   imports: [TypeOrmModule.forFeature([FighterDBEntity, FighterStatsDBEntity])],
-  providers,
+  providers: [
+    ...persistence_providers,
+    ...interactor_providers,
+    ...facade_providers
+  ],
   exports: [
-    FightingDITokens.FighterRepository
+    FightingDITokens.FighterRepository,
+    FightingDITokens.FighterFacade
   ],
   controllers: [FighterController]
 })

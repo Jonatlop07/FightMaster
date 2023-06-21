@@ -4,7 +4,7 @@ import {
   FightFilterParamsDTO,
   FightsFilterParamsDTO
 } from '@core/domain/fighting/dto/filter_params';
-import { Nullable, Optional } from '@core/abstraction/type';
+import { Nullable } from '@core/abstraction/type';
 import FightDBEntity from '@db/typeorm/entity/fight';
 import { CoreLogger } from '@core/abstraction/logging';
 import { Repository } from 'typeorm';
@@ -14,8 +14,6 @@ import CoreDITokens from '@core/abstraction/di';
 import { toPrettyJsonString } from '@core/abstraction/format';
 import { FightMapper } from '@db/typeorm/mapper/fight.mapper';
 import { EntityName } from '@core/domain/fighting/entity/entity_name';
-import EventDBEntity from '@db/typeorm/entity/event';
-import FighterDBEntity from '@db/typeorm/entity/fighter';
 import { FightRepository } from '@core/domain/fighting/repository';
 
 const entity_alias = 'fight';
@@ -26,14 +24,15 @@ const entity_fields = {
   fighter2: 'fighter2',
   winner: 'winner',
 };
-
-const fighter_alias = 'fighter';
 const fighter_fields = {
   id: 'id',
   stats: {
     alias: 'stats',
   }
 };
+const stats_alias1 = 'stats1';
+const stats_alias2 = 'stats2';
+const stats_alias3 = 'stats3';
 
 export class FightTypeOrmRepositoryAdapter implements FightRepository {
   private static readonly entity_name: string =  EntityName.Fight;
@@ -41,39 +40,24 @@ export class FightTypeOrmRepositoryAdapter implements FightRepository {
   constructor(
     @InjectRepository(FightDBEntity)
     private readonly repository: Repository<FightDBEntity>,
-    @InjectRepository(EventDBEntity)
-    private readonly event_repository: Repository<EventDBEntity>,
-    @InjectRepository(FighterDBEntity)
-    private readonly fighter_repository: Repository<FighterDBEntity>,
     @Inject(CoreDITokens.CoreLogger)
     private readonly logger: CoreLogger
   ) {
   }
 
   public async create(details_dto: FightDetailsDTO): Promise<FightDTO> {
-    const event_entity = await this.findEventById(details_dto.event_id);
-    const fighter1_entity: FighterDBEntity = await this.findFighterById(details_dto.fighter1_id);
-    const fighter2_entity: FighterDBEntity = await this.findFighterById(details_dto.fighter2_id);
-    const winner_entity: Optional<FighterDBEntity> = details_dto.winner_id
-      ? await this.findFighterById(details_dto.winner_id)
-      : undefined;
-    const fight_to_save = FightMapper.fromDetailsDTO(
-      event_entity,
-      fighter1_entity,
-      fighter2_entity,
-      details_dto,
-      winner_entity,
-    );
+    const fight_to_save = FightMapper.fromDetailsDTO(details_dto);
     this.logger.log(
       `➕ ${FightTypeOrmRepositoryAdapter.entity_name} to save: ${toPrettyJsonString(fight_to_save)}`,
       FightTypeOrmRepositoryAdapter.name
     );
     const saved_fight = await this.repository.save(fight_to_save);
+    const fight_with_stats = await this.findFightByIdWithFighterStats(saved_fight.id);
     this.logger.log(
-      `➕ Saved ${FightTypeOrmRepositoryAdapter.entity_name}: ${toPrettyJsonString(saved_fight)}`,
+      `➕ Saved ${FightTypeOrmRepositoryAdapter.entity_name}: ${toPrettyJsonString(fight_with_stats)}`,
       FightTypeOrmRepositoryAdapter.name
     );
-    return FightMapper.fromDBEntity(saved_fight);
+    return FightMapper.fromDBEntity(fight_with_stats);
   }
 
   public async delete(params: FightFilterParamsDTO): Promise<Nullable<FightDTO> | void> {
@@ -93,7 +77,7 @@ export class FightTypeOrmRepositoryAdapter implements FightRepository {
       `🔎 Searching ${FightTypeOrmRepositoryAdapter.entity_name} by id: ${toPrettyJsonString(params.id)}`,
       FightTypeOrmRepositoryAdapter.name
     );
-    const fight_entity: FightDBEntity = await this.findFightById(params.id);
+    const fight_entity: FightDBEntity = await this.findFightByIdWithFighterStats(params.id);
     if (!!fight_entity) {
       this.logger.log(
         `🔎 Found ${FightTypeOrmRepositoryAdapter.entity_name}: ${toPrettyJsonString(fight_entity)}`,
@@ -164,42 +148,23 @@ export class FightTypeOrmRepositoryAdapter implements FightRepository {
     return foundEntities.map((entity) => FightMapper.fromDBEntity(entity));
   }
 
-  private async findFightById(fight_id: number): Promise<FightDBEntity> {
+  private async findFightByIdWithFighterStats(fight_id: number): Promise<FightDBEntity> {
     return await this.repository
       .createQueryBuilder(entity_alias)
       .leftJoinAndSelect(`${entity_alias}.${entity_fields.event}`, entity_fields.event)
       .leftJoinAndSelect(`${entity_alias}.${entity_fields.fighter1}`, entity_fields.fighter1)
       .leftJoinAndSelect(`${entity_alias}.${entity_fields.fighter2}`, entity_fields.fighter2)
       .leftJoinAndSelect(`${entity_alias}.${entity_fields.winner}`, entity_fields.winner)
+      .leftJoinAndSelect(`${entity_fields.fighter1}.${fighter_fields.stats.alias}`, stats_alias1)
+      .leftJoinAndSelect(`${entity_fields.fighter2}.${fighter_fields.stats.alias}`, stats_alias2)
+      .leftJoinAndSelect(`${entity_fields.winner}.${fighter_fields.stats.alias}`, stats_alias3)
       .where(`${entity_alias}.${entity_fields.id} = :${entity_fields.id}`, { id: fight_id })
       .getOne();
-  }
-
-  private async findFighterById(fighter_id: number): Promise<FighterDBEntity> {
-    return await this.fighter_repository
-      .createQueryBuilder(fighter_alias)
-      .leftJoinAndSelect(
-        `${fighter_alias}.${fighter_fields.stats.alias}`,
-        fighter_fields.stats.alias
-      )
-      .where(
-        `${fighter_alias}.${fighter_fields.id} = :${fighter_fields.id}`,
-        { id: fighter_id }
-      )
-      .getOne();
-  }
-
-  private async findEventById(event_id: number): Promise<EventDBEntity> {
-    return await this.event_repository.findOneBy({
-      id: event_id
-    });
   }
 
   private async findAllByFilterParams(
     { event_id, fighter_id, winner_id }: FightsFilterParamsDTO
   ): Promise<Array<FightDBEntity>> {
-    const stats_alias1 = 'stats1';
-    const stats_alias2 = 'stats2';
     const query_builder = this.repository.createQueryBuilder(entity_alias)
       .leftJoinAndSelect(`${entity_alias}.${entity_fields.event}`, entity_fields.event)
       .leftJoinAndSelect(`${entity_alias}.${entity_fields.fighter1}`, entity_fields.fighter1)

@@ -10,7 +10,7 @@ import {
   UpdateFightInteractor,
   UpdateFightOutputPort
 } from '@core/domain/fighting/use_case/fight/update_fight';
-import { FightDTO, FighterDTO } from '@core/domain/fighting/dto/dto';
+import { FightDTO } from '@core/domain/fighting/dto/dto';
 import { QueryFighterGateway } from '@core/domain/fighting/use_case/fighter/query_fighter';
 
 export default class UpdateFightService implements UpdateFightInteractor {
@@ -27,7 +27,7 @@ export default class UpdateFightService implements UpdateFightInteractor {
       `📝 ${this.entity_name} to update: ${toPrettyJsonString(input)}`,
       `Update${this.entity_name}Service`
     );
-    const { id, winner_id } = input.update_details;
+    const { id, winner } = input.update_details;
     const fight_dto: FightDTO = await this.gateway.findOneBy({ id });
     CoreAssert.notEmpty(
       fight_dto,
@@ -36,7 +36,6 @@ export default class UpdateFightService implements UpdateFightInteractor {
         override_message: `${this.entity_name} not found.`
       })
     );
-    const winner: FighterDTO = await this.fighter_gateway.findOneBy({ id: winner_id });
     CoreAssert.isFalse(
       !!winner,
       CoreException.new({
@@ -44,11 +43,7 @@ export default class UpdateFightService implements UpdateFightInteractor {
         override_message: 'The winner of a fight can be setup once and is the only update allowed',
       })
     );
-    const updated_entity = await this.gateway.partialUpdate(
-      fight_dto,
-      {
-        winner: winner
-      });
+    const updated_entity = await this.gateway.partialUpdate(fight_dto, { winner });
     // A revisar: cuando se crea una pelea, los dos peleadores deben ser de la misma categoría de peso
     // Necesito datos de: si ganó por knockout, sumisión o puntos.
     // Una vez se gana una pelea, toca obtener tod0 el ranking de la categoria de peso

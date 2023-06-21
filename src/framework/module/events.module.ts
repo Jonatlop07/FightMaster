@@ -17,9 +17,9 @@ import { CreateEventGateway, CreateEventInteractor } from '@core/domain/fighting
 import CreateEntityService from '@core/application/create_entity.service';
 import { EventDetailsDTO, FightDetailsDTO } from '@core/domain/fighting/dto/details';
 import { TransactionalUseCaseWrapper } from '@db/typeorm/transaction';
-import { QueryEventGateway } from '@core/domain/fighting/use_case/event/query_event';
+import { QueryEventGateway, QueryEventInteractor } from '@core/domain/fighting/use_case/event/query_event';
 import QueryEntityService from '@core/application/query_entity.service';
-import { QueryEventsGateway } from '@core/domain/fighting/use_case/event/query_events';
+import { QueryEventsGateway, QueryEventsInteractor } from '@core/domain/fighting/use_case/event/query_events';
 import { UpdateEventGateway, UpdateEventInteractor } from '@core/domain/fighting/use_case/event/update_event';
 import UpdateEntityService from '@core/application/update_entity.service';
 import { DeleteEventGateway, DeleteEventInteractor } from '@core/domain/fighting/use_case/event/delete_event';
@@ -31,12 +31,25 @@ import { FighterModule } from '@framework/module/fighter.module';
 import { CreateFightGateway, CreateFightInteractor } from '@core/domain/fighting/use_case/fight/create_fight';
 import { DeleteFightGateway, DeleteFightInteractor } from '@core/domain/fighting/use_case/fight/delete_fight';
 import { UpdateFightGateway, UpdateFightInteractor } from '@core/domain/fighting/use_case/fight/update_fight';
-import { QueryFightsGateway } from '@core/domain/fighting/use_case/fight/query_fights';
-import { QueryFightGateway } from '@core/domain/fighting/use_case/fight/query_fight';
+import { QueryFightsGateway, QueryFightsInteractor } from '@core/domain/fighting/use_case/fight/query_fights';
+import { QueryFightGateway, QueryFightInteractor } from '@core/domain/fighting/use_case/fight/query_fight';
 import UpdateFightService from '@core/application/fight/update_fight.service';
 import { QueryFighterGateway } from '@core/domain/fighting/use_case/fighter/query_fighter';
+import { EventFacadeImpl } from '@core/application/event/event.facade_impl';
+import { FightFacadeImpl } from '@core/application/fight/fight.facade_impl';
 
-const event_feature_providers = [
+const persistence_providers: Array<Provider> = [
+  {
+    provide: FightingDITokens.EventRepository,
+    useClass: EventTypeOrmRepositoryAdapter
+  },
+  {
+    provide: FightingDITokens.FightRepository,
+    useClass: FightTypeOrmRepositoryAdapter
+  }
+];
+
+const event_feature_providers: Array<Provider> = [
   {
     provide: FightingDITokens.CreateEventInteractor,
     useFactory: (gateway: CreateEventGateway, logger: CoreLogger) => {
@@ -117,7 +130,7 @@ const fight_feature_providers: Array<Provider> = [
       const interactor: CreateFightInteractor = new CreateEntityService<
         FightDetailsDTO,
         FightDTO
-        >(
+      >(
         gateway,
         EntityName.Fight,
         logger
@@ -192,14 +205,65 @@ const fight_feature_providers: Array<Provider> = [
   },
 ];
 
-const persistence_providers: Array<Provider> = [
+
+const facade_providers: Array<Provider> = [
   {
-    provide: FightingDITokens.EventRepository,
-    useClass: EventTypeOrmRepositoryAdapter
+    provide: FightingDITokens.EventFacade,
+    useFactory: (
+      q: QueryEventInteractor,
+      qs: QueryEventsInteractor,
+      c: CreateEventInteractor,
+      u: UpdateEventInteractor,
+      d: DeleteEventInteractor,
+      l: CoreLogger
+    ) =>
+      new EventFacadeImpl(
+        {
+          delete_event_interactor: d,
+          update_event_interactor: u,
+          create_event_interactor: c,
+          query_events_interactor: qs,
+          query_event_interactor: q,
+          logger: l
+        }
+      ),
+    inject: [
+      FightingDITokens.QueryEventInteractor,
+      FightingDITokens.QueryEventsInteractor,
+      FightingDITokens.CreateEventInteractor,
+      FightingDITokens.UpdateEventInteractor,
+      FightingDITokens.DeleteEventInteractor,
+      CoreDITokens.CoreLogger
+    ]
   },
   {
-    provide: FightingDITokens.FightRepository,
-    useClass: FightTypeOrmRepositoryAdapter
+    provide: FightingDITokens.FightFacade,
+    useFactory: (
+      q: QueryFightInteractor,
+      qs: QueryFightsInteractor,
+      c: CreateFightInteractor,
+      u: UpdateFightInteractor,
+      d: DeleteFightInteractor,
+      l: CoreLogger
+    ) =>
+      new FightFacadeImpl(
+        {
+          delete_fight_interactor: d,
+          update_fight_interactor: u,
+          create_fight_interactor: c,
+          query_fights_interactor: qs,
+          query_fight_interactor: q,
+          logger: l
+        }
+      ),
+    inject: [
+      FightingDITokens.QueryFightInteractor,
+      FightingDITokens.QueryFightsInteractor,
+      FightingDITokens.CreateFightInteractor,
+      FightingDITokens.UpdateFightInteractor,
+      FightingDITokens.DeleteFightInteractor,
+      CoreDITokens.CoreLogger
+    ]
   }
 ];
 
@@ -211,6 +275,7 @@ const persistence_providers: Array<Provider> = [
   providers: [
     ...persistence_providers,
     ...event_feature_providers,
+    ...facade_providers,
     ...fight_feature_providers
   ],
   controllers: [EventsController]

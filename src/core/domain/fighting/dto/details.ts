@@ -1,3 +1,5 @@
+import { EventDTO, FighterDTO } from '@core/domain/fighting/dto/dto';
+
 export interface FighterDetailsDTO {
   name: string;
   weight_class: string;
@@ -22,14 +24,13 @@ export interface EventDetailsDTO {
 }
 
 export interface FightDetailsDTO {
-  event_id: number;
-  fighter1_id: number;
-  fighter2_id: number;
-  winner_id: number;
+  event: EventDTO;
+  fighter1: FighterDTO;
+  fighter2: FighterDTO;
+  winner: FighterDTO;
 }
 
 export interface UpdateFightDetailsDTO {
   id: number;
-  winner_id: number;
-
+  winner: FighterDTO;
 }
