@@ -28,6 +28,14 @@ export function invalidEntityFieldsResponseMessage(entity_name: EntityName) {
   return `${entity_name} data has invalid format`;
 }
 
+export function unauthorizedToDeleteEntityResponseMessage(entity_name: EntityName) {
+  return `Unauthorized to delete ${entity_name}`;
+}
+
+export function unauthorizedToUpdateEntityResponseMessage(entity_name: EntityName) {
+  return `Unauthorized to update ${entity_name}`;
+}
+
 export function queriedDataApiResponseMessage(data_alias: string) {
   return `${data_alias} successfully retrieved`;
 }

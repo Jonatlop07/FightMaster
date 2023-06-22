@@ -1,6 +1,6 @@
 import * as chalk from 'chalk';
 import * as helmet from 'helmet';
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
 import { NestFactory } from '@nestjs/core';
 import { APIServerConfiguration } from '../config/api_server.config';
@@ -20,6 +20,7 @@ export class ServerApplication {
         options['logger'] = false;
       }
       const app = await NestFactory.create(RootModule, options);
+      app.useGlobalPipes(new ValidationPipe());
       app.enableCors({
         origin: this.origin
       });

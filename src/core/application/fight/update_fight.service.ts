@@ -39,7 +39,7 @@ export default class UpdateFightService implements UpdateFightInteractor {
     CoreAssert.isFalse(
       !!fight_dto.winner || !!fight_dto.win_method,
       CoreException.new({
-        code: Code.ACCESS_DENIED_ERROR,
+        code: Code.UNAUTHORIZED_ERROR,
         override_message: 'The winner of a fight can be setup once and is the only update allowed',
       })
     );

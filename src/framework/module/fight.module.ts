@@ -14,7 +14,6 @@ import QueryEntityService from '@core/application/query_entity.service';
 import { FightFilterParamsDTO, FightsFilterParamsDTO } from '@core/domain/fighting/dto/filter_params';
 import QueryEntitiesService from '@core/application/query_entities.service';
 import UpdateFightService from '@core/application/fight/update_fight.service';
-import DeleteEntityService from '@core/application/delete_entity.service';
 import { FighterFacade } from '@core/domain/fighting/facade/fighter.facade';
 import { FightFacade } from '@core/domain/fighting/facade/fight.facade';
 import { RankingFacade } from '@core/domain/fighting/facade/ranking.facade';
@@ -28,6 +27,7 @@ import { CreateFightService } from '@core/application/fight/create_fight.service
 import FightDITokens from '@core/domain/fighting/di/fight.di_tokens';
 import FighterDITokens from '@core/domain/fighting/di/fighter.di_tokens';
 import RankingDITokens from '@core/domain/fighting/di/ranking.di_tokens';
+import DeleteFightService from '@core/application/fight/delete_fight.service';
 
 const persistence_providers: Array<Provider> = [
   {
@@ -94,12 +94,8 @@ const feature_providers: Array<Provider> = [
       gateway: DeleteFightGateway,
       logger: CoreLogger
     ) => {
-      const interactor: DeleteFightInteractor = new DeleteEntityService<
-        FightFilterParamsDTO,
-        FightDTO
-        >(
+      const interactor: DeleteFightInteractor = new DeleteFightService(
         gateway,
-        EntityName.Fight,
         logger
       );
       return new TransactionalUseCaseWrapper(interactor);

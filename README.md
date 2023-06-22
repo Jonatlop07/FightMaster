@@ -26,9 +26,9 @@ After you have deployed the db, I suggest you two options:
    and expose it to the same port in localhost. Remember to check the
       API doc on `http://localhost:3001/api`.
 
-The following is the EDR of the Database:
+The following is the ERD of the Database:
 
-![edr](./assets/EDRFightMaster.png)
+![edr](./assets/ERDFightMaster.png)
 
 The script of the database can be found in the file `<project-root>/fight_master_db.sql`. 
 

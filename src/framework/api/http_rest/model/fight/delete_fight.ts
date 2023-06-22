@@ -7,7 +7,7 @@ export interface DeleteFightResponse {
 export class DeleteFightMapper {
   public static toResponse(output: DeleteFightOutputPort): DeleteFightResponse {
     return {
-      deleted_fight: output.deleted_entity
+      deleted_fight: output.deleted_fight
     };
   }
 }

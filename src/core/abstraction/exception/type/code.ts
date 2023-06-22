@@ -49,9 +49,9 @@ export class Code {
     message: 'Entity validation error.'
   };
 
-  public static USE_CASE_PORT_VALIDATION_ERROR: CodeDescription = {
+  public static INTERACTOR_INPUT_PORT_VALIDATION_ERROR: CodeDescription = {
     code: 1002,
-    message: 'Use-case port validation error.'
+    message: 'Interactor input port validation error.'
   };
 
   public static VALUE_OBJECT_VALIDATION_ERROR: CodeDescription = {

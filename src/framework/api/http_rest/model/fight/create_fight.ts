@@ -1,9 +1,7 @@
-import { IsEnum, IsNumber, IsOptional } from 'class-validator';
+import { IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { CreateFightOutputPort } from '@core/domain/fighting/use_case/fight/create_fight';
 import { FightDTO } from '@core/domain/fighting/dto/dto';
-import { FightWinMethod } from '@core/domain/fighting/entity/enum';
-import { Nullable, Optional } from '@core/abstraction/type';
 
 export class CreateFightRequestBody {
   @IsNumber()

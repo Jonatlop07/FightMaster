@@ -20,13 +20,13 @@ import {
   ApiOkResponse,
   ApiParam,
   ApiQuery,
-  ApiTags
+  ApiTags, ApiUnauthorizedResponse
 } from '@nestjs/swagger';
 import { EntityName } from '@core/domain/fighting/entity/enum';
 import {
   createdEntityApiResponseMessage, deletedEntityApiResponseMessage,
   invalidEntityFieldsResponseMessage, notFoundEntityResponseMessage, queriedEntitiesApiResponseMessage,
-  queriedEntityApiResponseMessage,
+  queriedEntityApiResponseMessage, unauthorizedToDeleteEntityResponseMessage, unauthorizedToUpdateEntityResponseMessage,
   updatedEntityApiResponseMessage
 } from '@framework/api/http_rest/documentation';
 import {
@@ -51,7 +51,7 @@ import { DeleteEventMapper, DeleteEventResponse } from '@framework/api/http_rest
 import {
   CreateFightMapper,
   CreateFightRequestBody,
-  CreateFightResponse
+  CreateFightResponse,
 } from '@framework/api/http_rest/model/fight/create_fight';
 import { QueryFightMapper, QueryFightResponse } from '@framework/api/http_rest/model/fight/query_fight';
 import {
@@ -379,6 +379,11 @@ export class EventsController {
       EventsController.fight_entity_name
     )
   })
+  @ApiUnauthorizedResponse({
+    description: unauthorizedToUpdateEntityResponseMessage(
+      EventsController.fight_entity_name
+    )
+  })
   public async updateFight(
     @Param('event_id', ParseIntPipe) event_id: number,
     @Param('fight_id', ParseIntPipe) fight_id: number,
@@ -416,6 +421,11 @@ export class EventsController {
       EventsController.fight_entity_name
     )
   })
+  @ApiUnauthorizedResponse({
+    description: unauthorizedToDeleteEntityResponseMessage(
+      EventsController.fight_entity_name
+    )
+  })
   public async deleteFight(
     @Param('fight_id', ParseIntPipe) fight_id: number
   ): Promise<CoreResponse<DeleteFightResponse>> {
@@ -424,7 +434,7 @@ export class EventsController {
       EventsController.name
     );
     const output = await this.fight_facade.deleteFight(
-      { filter_params: { id: fight_id } }
+      { fight_params: { id: fight_id } }
     );
     const response = CoreResponse.success(
       DeleteFightMapper.toResponse(output)
