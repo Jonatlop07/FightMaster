@@ -27,8 +27,8 @@ export default class DeleteFightService implements DeleteFightInteractor {
         code: Code.UNAUTHORIZED_ERROR,
         override_message: 'Fight cannot be deleted because its winner was already defined',
       })
-    )
-    await this.gateway.delete(input.fight_params)
+    );
+    await this.gateway.delete(input.fight_params);
     this.logger.log(
       `⛔ Deleted Fight: ${toPrettyJsonString(fight_to_delete)}`,
       DeleteFightService.name

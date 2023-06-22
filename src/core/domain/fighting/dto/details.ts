@@ -1,6 +1,5 @@
 import { EventDTO, FighterDTO } from '@core/domain/fighting/dto/dto';
 import { FightWinMethod, WeightClass } from '@core/domain/fighting/entity/enum';
-import { Nullable, Optional } from '@core/abstraction/type';
 
 export interface FighterDetailsDTO {
   name: string;
@@ -25,10 +24,6 @@ export interface UpdateFightDetailsDTO {
   id: number;
   winner: FighterDTO;
   win_method: FightWinMethod;
-}
-
-export interface UpdateRankingDetailsDTO {
-  weight_class: WeightClass;
 }
 
 export interface RankingDetailsDTO {
