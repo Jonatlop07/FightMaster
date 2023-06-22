@@ -1,15 +1,15 @@
 import { Nullable } from '@core/abstraction/type';
+import { FightWinMethod, WeightClass } from '@core/domain/fighting/entity/enum';
 
-export interface FighterDTO {
+interface FighterDTO {
   id: number;
   name: string;
-  weight_class: string;
+  weight_class: WeightClass;
   nationality: string;
   team: string;
-  stats: FighterStatsDTO;
 }
 
-export interface FighterStatsDTO {
+interface FighterStatsDTO {
   fighter_id: number;
   wins: number;
   losses: number;
@@ -19,17 +19,45 @@ export interface FighterStatsDTO {
   by_decision: number;
 }
 
-export interface EventDTO {
+interface EventDTO {
   id: number;
   name: string;
   location: string;
   date: Date;
 }
 
-export interface FightDTO {
+interface FightDTO {
   id: number;
   event: EventDTO;
   fighter1: FighterDTO;
   fighter2: FighterDTO;
   winner: Nullable<FighterDTO>;
+  win_method: Nullable<FightWinMethod>;
 }
+
+interface RankingDTO {
+  id: number;
+  weight_class: WeightClass;
+  rank: number;
+  fighter: FighterDTO;
+}
+
+interface FighterRankingWithStatsDTO {
+  ranking: RankingDTO,
+  stats: FighterStatsDTO
+}
+
+interface RankingWithScoreDTO {
+  ranking: RankingDTO;
+  score: number;
+}
+
+export {
+  FighterDTO,
+  FighterStatsDTO,
+  EventDTO,
+  FightDTO,
+  RankingDTO,
+  FighterRankingWithStatsDTO,
+  RankingWithScoreDTO
+};

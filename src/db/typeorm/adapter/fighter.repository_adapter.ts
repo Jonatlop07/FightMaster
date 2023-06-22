@@ -8,14 +8,12 @@ import {
 import { Nullable } from '@core/abstraction/type';
 import FighterDBEntity from '@db/typeorm/entity/fighter';
 import { CoreLogger } from '@core/abstraction/logging';
-import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Inject } from '@nestjs/common';
 import CoreDITokens from '@core/abstraction/di';
 import { toPrettyJsonString } from '@core/abstraction/format';
 import { FighterMapper } from '@db/typeorm/mapper/fighter.mapper';
-import { EntityName } from '@core/domain/fighting/entity/entity_name';
-import FighterStatsDBEntity from '@db/typeorm/entity/fighter_stats';
+import { EntityName } from '@core/domain/fighting/entity/enum';
 import { FighterTypeOrmRepository } from '@db/typeorm/repository';
 
 const entity_alias = 'fighter';
@@ -37,19 +35,9 @@ export class FighterTypeOrmRepositoryAdapter implements FighterRepository {
   constructor(
     @InjectRepository(FighterDBEntity)
     private readonly repository: FighterTypeOrmRepository,
-    @InjectRepository(FighterStatsDBEntity)
-    private readonly fighter_stats_repository: Repository<FighterStatsDBEntity>,
     @Inject(CoreDITokens.CoreLogger)
     private readonly logger: CoreLogger
   ) {
-  }
-
-  private async findFighterById(fighter_id: number): Promise<FighterDBEntity> {
-    return await this.repository
-      .createQueryBuilder(entity_alias)
-      .leftJoinAndSelect(`${entity_alias}.${entity_fields.stats.alias}`, entity_fields.stats.alias)
-      .where(`${entity_alias}.${entity_fields.id} = :${entity_fields.id}`, { id: fighter_id })
-      .getOne();
   }
 
   public async create(details_dto: FighterDetailsDTO): Promise<FighterDTO> {
@@ -71,7 +59,6 @@ export class FighterTypeOrmRepositoryAdapter implements FighterRepository {
       `⛔ ${FighterTypeOrmRepositoryAdapter.entity_name} id to delete: ${toPrettyJsonString(params.id)}`,
       FighterTypeOrmRepositoryAdapter.name
     );
-    await this.fighter_stats_repository.delete({ fighter_id: params.id });
     await this.repository.delete({ id: params.id });
     this.logger.log(
       `⛔ ${FighterTypeOrmRepositoryAdapter.entity_name} with id: ${toPrettyJsonString(params.id)} deleted`,
@@ -84,7 +71,9 @@ export class FighterTypeOrmRepositoryAdapter implements FighterRepository {
       `🔎 Searching ${FighterTypeOrmRepositoryAdapter.entity_name} by id: ${toPrettyJsonString(params.id)}`,
       FighterTypeOrmRepositoryAdapter.name
     );
-    const fighter_entity: FighterDBEntity = await this.findFighterById(params.id);
+    const fighter_entity: FighterDBEntity = await this.repository.findOneBy({
+      id: params.id
+    });
     if (!!fighter_entity) {
       this.logger.log(
         `🔎 Found ${FighterTypeOrmRepositoryAdapter.entity_name}: ${toPrettyJsonString(fighter_entity)}`,
@@ -141,7 +130,6 @@ export class FighterTypeOrmRepositoryAdapter implements FighterRepository {
       `🔎 The ${FighterTypeOrmRepositoryAdapter.entity_name}s filter params: ${toPrettyJsonString(params)}`,
       FighterTypeOrmRepositoryAdapter.name
     );
-
     const foundEntities: Array<FighterDBEntity> = await this.findAllByFilterParams(params);
     this.logger.log(
       `🔎 The following ${FighterTypeOrmRepositoryAdapter.entity_name}s were found: ${toPrettyJsonString(foundEntities)}`,
@@ -154,11 +142,6 @@ export class FighterTypeOrmRepositoryAdapter implements FighterRepository {
     { name, nationality, pagination, team, weight_class }: FightersFilterParamsDTO
   ): Promise<Array<FighterDBEntity>> {
     const query_builder = this.repository.createQueryBuilder(entity_alias);
-    query_builder.leftJoinAndSelect(
-      `${entity_alias}.${entity_fields.stats.alias}`,
-      entity_fields.stats.alias,
-      `${entity_fields.stats.alias}.${entity_fields.stats.fighter_id} = ${entity_alias}.${entity_fields.id}`
-    );
     if (name) {
       query_builder.orWhere(
         `${entity_alias}.${entity_fields.name} = :${entity_fields.name}`,

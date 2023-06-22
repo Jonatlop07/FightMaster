@@ -12,7 +12,7 @@ import {
 import {
   ApiBody,
   ApiCreatedResponse,
-  ApiForbiddenResponse,
+  ApiForbiddenResponse, ApiNotFoundResponse,
   ApiOkResponse,
   ApiParam,
   ApiQuery,
@@ -20,11 +20,10 @@ import {
 } from '@nestjs/swagger';
 import CoreDITokens from '@core/abstraction/di';
 import { CoreLogger } from '@core/abstraction/logging';
-import FightingDITokens from '@core/domain/fighting/di';
-import { EntityName } from '@core/domain/fighting/entity/entity_name';
+import { EntityName } from '@core/domain/fighting/entity/enum';
 import {
   createdEntityApiResponseMessage, deletedEntityApiResponseMessage,
-  invalidEntityFieldsResponseMessage,
+  invalidEntityFieldsResponseMessage, notFoundDataResponseMessage, queriedDataApiResponseMessage,
   queriedEntityApiResponseMessage, updatedEntityApiResponseMessage
 } from '@framework/api/http_rest/documentation';
 import {
@@ -32,50 +31,46 @@ import {
   CreateFighterRequestBody, CreateFighterResponse
 } from '@framework/api/http_rest/model/fighter/create_fighter';
 import { CoreResponse } from '@core/abstraction/response';
-import { CreateFighterInteractor } from '@core/domain/fighting/use_case/fighter/create_fighter';
 import { toPrettyJsonString } from '@core/abstraction/format';
 import {
   QueryFightersMapper,
   QueryFightersRequestQuery,
   QueryFightersResponse
 } from '@framework/api/http_rest/model/fighter/query_fighters';
-import { QueryFightersInteractor } from '@core/domain/fighting/use_case/fighter/query_fighters';
-import { QueryFighterInteractor } from '@core/domain/fighting/use_case/fighter/query_fighter';
 import { QueryFighterMapper, QueryFighterResponse } from '@framework/api/http_rest/model/fighter/query_fighter';
 import {
   UpdateFighterMapper,
   UpdateFighterRequestBody,
   UpdateFighterResponse
 } from '@framework/api/http_rest/model/fighter/update_fighter';
-import { UpdateFighterInteractor } from '@core/domain/fighting/use_case/fighter/update_fighter';
-import { DeleteFighterInteractor } from '@core/domain/fighting/use_case/fighter/delete_fighter';
 import { DeleteFighterMapper, DeleteFighterResponse } from '@framework/api/http_rest/model/fighter/delete_fighter';
+import { RankingFacade } from '@core/domain/fighting/facade/ranking.facade';
+import { FighterFacade } from '@core/domain/fighting/facade/fighter.facade';
+import {
+  QueryFighterStatsMapper,
+  QueryFighterStatsResponse
+} from '@framework/api/http_rest/model/fighter/query_fighter_statistics';
+import FighterDITokens from '@core/domain/fighting/di/fighter.di_tokens';
+import RankingDITokens from '@core/domain/fighting/di/ranking.di_tokens';
 
 @Controller('fighters')
 @ApiTags('fighters')
 export class FighterController {
   private static readonly entity_name: EntityName =  EntityName.Fighter;
+  private static readonly stats_alias = 'Fighter statistics';
 
   constructor(
-    @Inject(FightingDITokens.CreateFighterInteractor)
-    private readonly create_fighter_interactor: CreateFighterInteractor,
-    @Inject(FightingDITokens.QueryFightersInteractor)
-    private readonly query_fighters_interactor: QueryFightersInteractor,
-    @Inject(FightingDITokens.QueryFighterInteractor)
-    private readonly query_fighter_interactor: QueryFighterInteractor,
-    @Inject(FightingDITokens.UpdateFighterInteractor)
-    private readonly update_fighter_interactor: UpdateFighterInteractor,
-    @Inject(FightingDITokens.DeleteFighterInteractor)
-    private readonly delete_fighter_interactor: DeleteFighterInteractor,
+    @Inject(FighterDITokens.FighterFacade)
+    private readonly fighter_facade: FighterFacade,
+    @Inject(RankingDITokens.RankingFacade)
+    private readonly ranking_facade: RankingFacade,
     @Inject(CoreDITokens.CoreLogger)
     private readonly logger: CoreLogger,
   ) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @ApiBody({
-    type: CreateFighterRequestBody
-  })
+  @ApiBody({ type: CreateFighterRequestBody })
   @ApiCreatedResponse({
     description: createdEntityApiResponseMessage(
       FighterController.entity_name
@@ -93,8 +88,19 @@ export class FighterController {
       `➕ CreateFighter body: ${toPrettyJsonString(body)}`,
       FighterController.name
     );
-    const output = await this.create_fighter_interactor.execute(
+    const output = await this.fighter_facade.createFighter(
       CreateFighterMapper.toInputPort(body)
+    );
+    const { created_ranking } = await this.ranking_facade.createFighterRanking({
+      ranking_details: {
+        rank: 0,
+        weight_class: output.created_entity.weight_class,
+        fighter: output.created_entity,
+      }
+    });
+    this.logger.log(
+      `➕ CreateFighterRanking output: ${toPrettyJsonString(created_ranking)}`,
+      FighterController.name
     );
     const response = CoreResponse.created(
       CreateFighterMapper.toResponse(output)
@@ -123,7 +129,7 @@ export class FighterController {
       `➕ QueryFighters query: ${toPrettyJsonString(query)}`,
       FighterController.name
     );
-    const output = await this.query_fighters_interactor.execute(
+    const output = await this.fighter_facade.queryFighters(
       QueryFightersMapper.toInputPort(query)
     );
     const response = CoreResponse.success(
@@ -154,7 +160,7 @@ export class FighterController {
       `➕ QueryFighter fighter_id: ${toPrettyJsonString(fighter_id)}`,
       FighterController.name
     );
-    const output = await this.query_fighter_interactor.execute(
+    const output = await this.fighter_facade.queryFighter(
       {
         filter_params: {
           id: fighter_id
@@ -193,7 +199,7 @@ export class FighterController {
       `➕ UpdatedFighter body: ${toPrettyJsonString(body)}`,
       FighterController.name
     );
-    const output = await this.update_fighter_interactor.execute(
+    const output = await this.fighter_facade.updateFighter(
       UpdateFighterMapper.toInputPort(fighter_id, body)
     );
     const response = CoreResponse.success(
@@ -224,7 +230,7 @@ export class FighterController {
       `➕ DeleteFighter fighter_id: ${toPrettyJsonString(fighter_id)}`,
       FighterController.name
     );
-    const output = await this.delete_fighter_interactor.execute(
+    const output = await this.fighter_facade.deleteFighter(
       {
         filter_params: {
           id: fighter_id
@@ -236,6 +242,39 @@ export class FighterController {
     );
     this.logger.log(
       `➕ DeleteFighter response: ${toPrettyJsonString(response)}`,
+      FighterController.name
+    );
+    return response;
+  }
+
+  @Get(':fighter_id/stats')
+  @HttpCode(HttpStatus.OK)
+  @ApiParam({ name: 'fighter_id', type: 'number' })
+  @ApiOkResponse({
+    description: queriedDataApiResponseMessage(
+      FighterController.stats_alias
+    )
+  })
+  @ApiNotFoundResponse({
+    description: notFoundDataResponseMessage(
+      FighterController.stats_alias
+    )
+  })
+  public async queryFighterStatistics(
+    @Param('fighter_id', ParseIntPipe) fighter_id: number,
+  ): Promise<CoreResponse<QueryFighterStatsResponse>> {
+    this.logger.log(
+      `➕ QueryFighterStats fighter_id: ${toPrettyJsonString(fighter_id)}`,
+      FighterController.name
+    );
+    const output = await this.fighter_facade.queryFighterStats({
+      fighter_id
+    });
+    const response = CoreResponse.success(
+      QueryFighterStatsMapper.toResponse(output)
+    );
+    this.logger.log(
+      `➕ QueryFighterStats response: ${toPrettyJsonString(response)}`,
       FighterController.name
     );
     return response;

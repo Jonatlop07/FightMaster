@@ -25,6 +25,10 @@ import {
   DeleteFighterOutputPort
 } from '@core/domain/fighting/use_case/fighter/delete_fighter';
 import { CoreLogger } from '@core/abstraction/logging';
+import {
+  QueryFighterStatsInputPort, QueryFighterStatsInteractor,
+  QueryFighterStatsOutputPort
+} from '@core/domain/fighting/use_case/fight/query_fighter_stats';
 
 export class FighterFacadeImpl implements FighterFacade {
   private readonly query_fighter_interactor: QueryFighterInteractor;
@@ -32,6 +36,8 @@ export class FighterFacadeImpl implements FighterFacade {
   private readonly create_fighter_interactor: CreateFighterInteractor;
   private readonly update_fighter_interactor: UpdateFighterInteractor;
   private readonly delete_fighter_interactor: DeleteFighterInteractor;
+  private readonly query_fighter_stats_interactor: QueryFighterStatsInteractor;
+
   private readonly logger: CoreLogger;
 
   constructor(dependencies: FighterFacadeDeps) {
@@ -40,6 +46,7 @@ export class FighterFacadeImpl implements FighterFacade {
     this.create_fighter_interactor = dependencies.create_fighter_interactor;
     this.update_fighter_interactor = dependencies.update_fighter_interactor;
     this.delete_fighter_interactor = dependencies.delete_fighter_interactor;
+    this.query_fighter_stats_interactor = dependencies.query_fighter_stats_interactor;
     this.logger = dependencies.logger;
   }
 
@@ -58,8 +65,14 @@ export class FighterFacadeImpl implements FighterFacade {
   public async deleteFighter(input: DeleteFighterInputPort): Promise<DeleteFighterOutputPort> {
     return await this.delete_fighter_interactor.execute(input);
   }
+  public async queryFighterStats(
+    input: QueryFighterStatsInputPort
+  ): Promise<QueryFighterStatsOutputPort> {
+    return await this.query_fighter_stats_interactor.execute(input);
+  }
 }
 
 export interface FighterExternalFacade {
   queryFighter(input: QueryFighterInputPort): Promise<QueryFighterOutputPort>;
+  queryFighterStats(input: QueryFighterStatsInputPort): Promise<QueryFighterStatsOutputPort>;
 }

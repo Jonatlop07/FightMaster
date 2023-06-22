@@ -1,18 +1,16 @@
 import { Entity } from '@core/abstraction/entity';
-import { IsInstance, IsString } from 'class-validator';
+import { IsEnum, IsString } from 'class-validator';
 import { CreateFighterEntityPayload } from '@core/domain/fighting/entity/payload';
 import { FighterStats } from '@core/domain/fighting/entity/fighter_stats';
+import { WeightClass } from '@core/domain/fighting/entity/enum';
 
 export class Fighter extends Entity<number> {
-
-  @IsInstance(FighterStats)
-  private readonly stats: FighterStats;
-
   @IsString()
   private readonly name: string;
 
   @IsString()
-  private readonly weight_class: string;
+  @IsEnum(WeightClass)
+  private readonly weight_class: WeightClass;
 
   @IsString()
   private readonly nationality: string;
@@ -23,7 +21,6 @@ export class Fighter extends Entity<number> {
   constructor(payload: CreateFighterEntityPayload) {
     super();
     this.id = payload.id;
-    this.stats = payload.stats;
     this.name = payload.name;
     this.weight_class = payload.weight_class;
     this.nationality = payload.nationality;
@@ -40,7 +37,7 @@ export class Fighter extends Entity<number> {
     return this.name;
   }
 
-  public getWeightClass(): string {
+  public getWeightClass(): WeightClass {
     return this.weight_class;
   }
 
@@ -50,9 +47,5 @@ export class Fighter extends Entity<number> {
 
   public getTeam(): string {
     return this.team;
-  }
-
-  public getStats(): FighterStats {
-    return this.stats;
   }
 }

@@ -1,13 +1,12 @@
-import { FighterStats } from '@core/domain/fighting/entity/fighter_stats';
-import { Nullable } from '@core/abstraction/type';
+import { Nullable, Optional } from '@core/abstraction/type';
 import { Event } from '@core/domain/fighting/entity/event';
 import { Fighter } from '@core/domain/fighting/entity/fighter';
+import { FightWinMethod, WeightClass } from '@core/domain/fighting/entity/enum';
 
 export type CreateFighterEntityPayload = {
   id: number;
-  stats: FighterStats,
   name: string,
-  weight_class: string,
+  weight_class: WeightClass,
   nationality: string,
   team: string,
 };
@@ -17,7 +16,9 @@ export type CreateFighterStatsPayload = {
   wins: number,
   losses: number,
   knockouts: number,
+  tech_knockouts: number,
   submissions: number,
+  by_decision: number,
 };
 
 export type CreateFightEntityPayload = {
@@ -25,7 +26,8 @@ export type CreateFightEntityPayload = {
   event: Event;
   fighter1: Fighter;
   fighter2: Fighter;
-  winner: Nullable<Fighter>;
+  winner: Optional<Nullable<Fighter>>;
+  win_method: Optional<Nullable<FightWinMethod>>;
 };
 
 export type CreateEventEntityPayload = {
@@ -37,7 +39,7 @@ export type CreateEventEntityPayload = {
 
 export type CreateRankingEntityPayload = {
   id: number;
-  weight_class: string;
+  weight_class: WeightClass;
   rank: number;
   fighter_id: number;
 };

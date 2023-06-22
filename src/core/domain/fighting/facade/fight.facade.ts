@@ -31,6 +31,7 @@ export interface FightFacade {
   createFight(input: CreateFightInputPort): Promise<CreateFightOutputPort>;
   updateFight(input: UpdateFightInputPort): Promise<UpdateFightOutputPort>;
   deleteFight(input: DeleteFightInputPort): Promise<DeleteFightOutputPort>;
+
 }
 
 export interface FightFacadeDeps {
@@ -39,5 +40,6 @@ export interface FightFacadeDeps {
   create_fight_interactor: CreateFightInteractor;
   update_fight_interactor: UpdateFightInteractor;
   delete_fight_interactor: DeleteFightInteractor;
+
   logger: CoreLogger;
 }

@@ -6,12 +6,11 @@ import {
   HttpStatus,
   Inject,
   Param,
-  ParseIntPipe,
+  ParseIntPipe, Patch,
   Post,
   Put,
   Query
 } from '@nestjs/common';
-import FightingDITokens from '@core/domain/fighting/di';
 import CoreDITokens from '@core/abstraction/di';
 import { CoreLogger } from '@core/abstraction/logging';
 import {
@@ -23,7 +22,7 @@ import {
   ApiQuery,
   ApiTags
 } from '@nestjs/swagger';
-import { EntityName } from '@core/domain/fighting/entity/entity_name';
+import { EntityName } from '@core/domain/fighting/entity/enum';
 import {
   createdEntityApiResponseMessage, deletedEntityApiResponseMessage,
   invalidEntityFieldsResponseMessage, notFoundEntityResponseMessage, queriedEntitiesApiResponseMessage,
@@ -69,8 +68,12 @@ import { DeleteFightMapper, DeleteFightResponse } from '@framework/api/http_rest
 import { EventFacade } from '@core/domain/fighting/facade/event.facade';
 import { FightFacade } from '@core/domain/fighting/facade/fight.facade';
 import { FighterExternalFacade } from '@core/application/fighter/fighter.facade_impl';
-import { FighterDTO } from '@core/domain/fighting/dto/dto';
-import { Optional } from '@core/abstraction/type';
+import { RankingFacade } from '@core/domain/fighting/facade/ranking.facade';
+import { UpdateFightWithRankingInteractor } from '@core/domain/fighting/use_case/fight/update_fight_with_ranking';
+import EventDITokens from '@core/domain/fighting/di/event.di_tokens';
+import FightDITokens from '@core/domain/fighting/di/fight.di_tokens';
+import FighterDITokens from '@core/domain/fighting/di/fighter.di_tokens';
+import RankingDITokens from '@core/domain/fighting/di/ranking.di_tokens';
 
 @Controller('events')
 @ApiTags('events')
@@ -79,21 +82,23 @@ export class EventsController {
   private static readonly fight_entity_name: EntityName =  EntityName.Fight;
 
   constructor(
-    @Inject(FightingDITokens.EventFacade)
+    @Inject(EventDITokens.EventFacade)
     private readonly event_facade: EventFacade,
-    @Inject(FightingDITokens.FightFacade)
+    @Inject(FightDITokens.FightFacade)
     private readonly fight_facade: FightFacade,
-    @Inject(FightingDITokens.FighterFacade)
+    @Inject(FighterDITokens.FighterFacade)
     private readonly fighter_facade: FighterExternalFacade,
+    @Inject(RankingDITokens.RankingFacade)
+    private readonly ranking_facade: RankingFacade,
+    @Inject(FightDITokens.UpdateFightWithRankingInteractor)
+    private readonly update_fight_with_ranking_interactor: UpdateFightWithRankingInteractor,
     @Inject(CoreDITokens.CoreLogger)
     private readonly logger: CoreLogger,
   ) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @ApiBody({
-    type: CreateEventRequestBody
-  })
+  @ApiBody({ type: CreateEventRequestBody })
   @ApiCreatedResponse({
     description: createdEntityApiResponseMessage(
       EventsController.entity_name
@@ -124,9 +129,7 @@ export class EventsController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  @ApiQuery({
-    type: QueryEventsRequestQuery
-  })
+  @ApiQuery({ type: QueryEventsRequestQuery })
   @ApiOkResponse({
     description: queriedEntitiesApiResponseMessage(
       EventsController.entity_name
@@ -144,16 +147,9 @@ export class EventsController {
       output.entities.map(
         async (event) => {
           const { entities } = await this.fight_facade.queryFights(
-            {
-              filter_params: {
-                event_id: event.id
-              }
-            }
+            { filter_params: { event_id: event.id } }
           );
-          return {
-            ...event,
-            fights: entities
-          };
+          return { ...event, fights: entities };
         }
       )
     );
@@ -171,10 +167,7 @@ export class EventsController {
 
   @Get(':event_id')
   @HttpCode(HttpStatus.OK)
-  @ApiParam({
-    name: 'event_id',
-    type: 'number'
-  })
+  @ApiParam({ name: 'event_id', type: 'number' })
   @ApiOkResponse({
     description: queriedEntityApiResponseMessage(
       EventsController.entity_name
@@ -188,18 +181,8 @@ export class EventsController {
       EventsController.name
     );
     const [query_event_output, query_fights_output] = await Promise.all([
-      await this.event_facade.queryEvent(
-        {
-          filter_params: {
-            id: event_id
-          }
-        }
-      ),
-      await this.fight_facade.queryFights({
-        filter_params: {
-          event_id
-        }
-      })
+      this.event_facade.queryEvent({ filter_params: { id: event_id } }),
+      this.fight_facade.queryFights({ filter_params: { event_id } })
     ]);
     const response = CoreResponse.success(
       QueryEventMapper.toResponse(query_event_output, query_fights_output)
@@ -213,13 +196,8 @@ export class EventsController {
 
   @Put(':event_id')
   @HttpCode(HttpStatus.OK)
-  @ApiParam({
-    name: 'event_id',
-    type: 'number'
-  })
-  @ApiBody({
-    type: UpdateEventRequestBody
-  })
+  @ApiParam({ name: 'event_id', type: 'number' })
+  @ApiBody({ type: UpdateEventRequestBody })
   @ApiOkResponse({
     description: updatedEntityApiResponseMessage(
       EventsController.entity_name
@@ -248,10 +226,7 @@ export class EventsController {
 
   @Delete(':event_id')
   @HttpCode(HttpStatus.OK)
-  @ApiParam({
-    name: 'event_id',
-    type: 'number'
-  })
+  @ApiParam({ name: 'event_id', type: 'number' })
   @ApiOkResponse({
     description: deletedEntityApiResponseMessage(
       EventsController.entity_name
@@ -265,11 +240,7 @@ export class EventsController {
       EventsController.name
     );
     const output = await this.event_facade.deleteEvent(
-      {
-        filter_params: {
-          id: event_id
-        }
-      }
+      { filter_params: { id: event_id } }
     );
     const response = CoreResponse.success(
       DeleteEventMapper.toResponse(output)
@@ -283,9 +254,7 @@ export class EventsController {
 
   @Post('/:event_id/fights')
   @HttpCode(HttpStatus.CREATED)
-  @ApiBody({
-    type: CreateFightRequestBody
-  })
+  @ApiBody({ type: CreateFightRequestBody })
   @ApiCreatedResponse({
     description: createdEntityApiResponseMessage(
       EventsController.fight_entity_name
@@ -309,38 +278,16 @@ export class EventsController {
       { entity: fighter1 },
       { entity: fighter2 }
     ] = await Promise.all([
-      await this.event_facade.queryEvent({
-        filter_params: {
-          id: event_id
-        }
-      }),
-      await this.fighter_facade.queryFighter({
-        filter_params: {
-          id: body.fighter1_id
-        }
-      }),
-      await this.fighter_facade.queryFighter({
-        filter_params: {
-          id: body.fighter2_id
-        }
-      }),
+      this.event_facade.queryEvent({ filter_params: { id: event_id } }),
+      this.fighter_facade.queryFighter({ filter_params: { id: body.fighter1_id } }),
+      this.fighter_facade.queryFighter({ filter_params: { id: body.fighter2_id } }),
     ]);
-    let winner: Optional<FighterDTO>;
-    if (!!body.winner_id) {
-      const { entity } = await this.fighter_facade.queryFighter({
-        filter_params: {
-          id: body.winner_id
-        }
-      });
-      winner = entity;
-    }
     const output = await this.fight_facade.createFight(
       {
-        entity_details: {
+        fight_details: {
           event,
           fighter1,
           fighter2,
-          winner
         }
       }
     );
@@ -356,13 +303,8 @@ export class EventsController {
 
   @Get('/:event_id/fights/')
   @HttpCode(HttpStatus.OK)
-  @ApiParam({
-    name: 'event_id',
-    type: 'number'
-  })
-  @ApiQuery({
-    type: QueryFightsRequestQuery
-  })
+  @ApiParam({ name: 'event_id', type: 'number' })
+  @ApiQuery({ type: QueryFightsRequestQuery })
   @ApiOkResponse({
     description: queriedEntityApiResponseMessage(
       EventsController.fight_entity_name
@@ -399,14 +341,8 @@ export class EventsController {
 
   @Get('/:event_id/fights/:fight_id')
   @HttpCode(HttpStatus.OK)
-  @ApiParam({
-    name: 'event_id',
-    type: 'number'
-  })
-  @ApiParam({
-    name: 'fight_id',
-    type: 'number'
-  })
+  @ApiParam({ name: 'event_id', type: 'number' })
+  @ApiParam({ name: 'fight_id', type: 'number' })
   @ApiOkResponse({
     description: queriedEntityApiResponseMessage(
       EventsController.fight_entity_name
@@ -421,11 +357,7 @@ export class EventsController {
       EventsController.name
     );
     const output = await this.fight_facade.queryFight(
-      {
-        filter_params: {
-          id: fight_id
-        }
-      }
+      { filter_params: { id: fight_id } }
     );
     const response = CoreResponse.success(
       QueryFightMapper.toResponse(output)
@@ -437,19 +369,11 @@ export class EventsController {
     return response;
   }
 
-  @Put('/:event_id/fights/:fight_id')
+  @Patch('/:event_id/fights/:fight_id')
   @HttpCode(HttpStatus.OK)
-  @ApiParam({
-    name: 'event_id',
-    type: 'number'
-  })
-  @ApiParam({
-    name: 'fight_id',
-    type: 'number'
-  })
-  @ApiBody({
-    type: UpdateFightRequestBody
-  })
+  @ApiParam({ name: 'event_id', type: 'number' })
+  @ApiParam({ name: 'fight_id', type: 'number' })
+  @ApiBody({ type: UpdateFightRequestBody })
   @ApiOkResponse({
     description: updatedEntityApiResponseMessage(
       EventsController.fight_entity_name
@@ -468,16 +392,14 @@ export class EventsController {
       })}`,
       EventsController.name
     );
-    const { entity: winner } = await this.fighter_facade.queryFighter({
-      filter_params: {
-        id: body.winner_id
-      }
-    });
-    const output = await this.fight_facade.updateFight(
-      UpdateFightMapper.toInputPort(fight_id, winner)
+    const {
+      updated_fight,
+      updated_ranking
+    } = await this.update_fight_with_ranking_interactor.execute(
+      UpdateFightMapper.toInputPort(fight_id, body)
     );
     const response = CoreResponse.success(
-      UpdateFightMapper.toResponse(output)
+      UpdateFightMapper.toResponse(updated_fight, updated_ranking)
     );
     this.logger.log(
       `📝 UpdatedFight response: ${toPrettyJsonString(response)}`,
@@ -488,10 +410,7 @@ export class EventsController {
 
   @Delete('/:event_id/fights/:fight_id')
   @HttpCode(HttpStatus.OK)
-  @ApiParam({
-    name: 'fight_id',
-    type: 'number'
-  })
+  @ApiParam({ name: 'fight_id', type: 'number' })
   @ApiOkResponse({
     description: deletedEntityApiResponseMessage(
       EventsController.fight_entity_name
@@ -505,11 +424,7 @@ export class EventsController {
       EventsController.name
     );
     const output = await this.fight_facade.deleteFight(
-      {
-        filter_params: {
-          id: fight_id
-        }
-      }
+      { filter_params: { id: fight_id } }
     );
     const response = CoreResponse.success(
       DeleteFightMapper.toResponse(output)

@@ -4,7 +4,7 @@ import {
   UpdateEntityInputPort,
   UpdateEntityInteractor, UpdateEntityOutputPort
 } from '@core/domain/fighting/use_case/update_entity';
-import { EntityName } from '@core/domain/fighting/entity/entity_name';
+import { EntityName } from '@core/domain/fighting/entity/enum';
 import { toPrettyJsonString } from '@core/abstraction/format';
 import CoreAssert from '@core/abstraction/assert';
 import { IdentifiableDTO } from '@core/abstraction/type';

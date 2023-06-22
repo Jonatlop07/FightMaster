@@ -4,6 +4,7 @@ import { Optional } from '@core/abstraction/type';
 import { QueryFightersInputPort, QueryFightersOutputPort } from '@core/domain/fighting/use_case/fighter/query_fighters';
 import { FighterDTO } from '@core/domain/fighting/dto/dto';
 import { FightersFilterParamsDTO } from '@core/domain/fighting/dto/filter_params';
+import { WeightClass } from '@core/domain/fighting/entity/enum';
 
 export class QueryFightersRequestQuery {
   @IsString()
@@ -45,7 +46,7 @@ export class QueryFightersMapper {
   public static toInputPort(request: QueryFightersRequestQuery): QueryFightersInputPort {
     const filter_params: FightersFilterParamsDTO = {
       name: request.name,
-      weight_class: request.weight_class,
+      weight_class: request.weight_class as WeightClass,
       nationality: request.nationality,
       team: request.team,
     };

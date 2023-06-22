@@ -10,7 +10,7 @@ import { EventRepository } from '@core/domain/fighting/repository';
 import { EventDTO } from '@core/domain/fighting/dto/dto';
 import { EventFilterParamsDTO, EventsFilterParamsDTO } from '@core/domain/fighting/dto/filter_params';
 import { EventMapper } from '@db/typeorm/mapper/event.mapper';
-import { EntityName } from '@core/domain/fighting/entity/entity_name';
+import { EntityName } from '@core/domain/fighting/entity/enum';
 import { Repository } from 'typeorm';
 
 const entity_alias = 'event';

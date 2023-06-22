@@ -4,7 +4,7 @@ import {
   QueryEntityInteractor,
   QueryEntityOutputPort
 } from '@core/domain/fighting/use_case/query_entity';
-import { EntityName } from '@core/domain/fighting/entity/entity_name';
+import { EntityName } from '@core/domain/fighting/entity/enum';
 import { CoreLogger } from '@core/abstraction/logging';
 import { toPrettyJsonString } from '@core/abstraction/format';
 import CoreAssert from '@core/abstraction/assert';
@@ -23,7 +23,7 @@ export default class QueryEntityService<EntityFilterParamsDTO, EntityDTO>
   public async execute(input: QueryEntityInputPort<EntityFilterParamsDTO>): Promise<QueryEntityOutputPort<EntityDTO>> {
     this.logger.log(
       `🔎 ${this.entity_name} filter parameters: ${toPrettyJsonString(input)}`,
-      `Query${this.entity_name}sService`
+      `Query${this.entity_name}Service`
     );
     const entity = await this.gateway.findOneBy(input.filter_params);
     CoreAssert.notEmpty(
@@ -35,7 +35,7 @@ export default class QueryEntityService<EntityFilterParamsDTO, EntityDTO>
     );
     this.logger.log(
       `🔎 ${this.entity_name}: ${toPrettyJsonString(entity)}`,
-      `Query${this.entity_name}sService`
+      `Query${this.entity_name}Service`
     );
     return { entity };
   }

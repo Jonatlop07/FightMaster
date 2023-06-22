@@ -6,7 +6,7 @@ export class EventMapper {
   public static fromDBEntity(input: EventDBEntity): EventDTO {
     const event_dto: EventDTO = {
       id: input.id,
-      date: input.date,
+      date: new Date(input.date),
       location: input.location,
       name: input.name,
     };

@@ -3,7 +3,7 @@ import {
   QueryEntitiesInputPort,
   QueryEntitiesInteractor, QueryEntitiesOutputPort
 } from '@core/domain/fighting/use_case/query_entities';
-import { EntityName } from '@core/domain/fighting/entity/entity_name';
+import { EntityName } from '@core/domain/fighting/entity/enum';
 import { CoreLogger } from '@core/abstraction/logging';
 import { toPrettyJsonString } from '@core/abstraction/format';
 import { FilterWithPagination } from '@core/domain/fighting/dto/filter_params';

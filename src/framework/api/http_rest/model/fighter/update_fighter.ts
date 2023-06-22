@@ -1,33 +1,8 @@
-import { IsDefined, IsInstance, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsDefined, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { FighterDTO } from '@core/domain/fighting/dto/dto';
 import { UpdateFighterInputPort, UpdateFighterOutputPort } from '@core/domain/fighting/use_case/fighter/update_fighter';
-
-export class UpdateFighterRequestFighterStats {
-  @IsNumber()
-  @ApiProperty({type: 'number'})
-  public wins: number;
-
-  @IsNumber()
-  @ApiProperty({type: 'number'})
-  public losses: number;
-
-  @IsNumber()
-  @ApiProperty({type: 'number'})
-  public knockouts: number;
-
-  @IsNumber()
-  @ApiProperty({type: 'number'})
-  public submissions: number;
-
-  @IsNumber()
-  @ApiProperty({type: 'number'})
-  public tech_knockouts: number;
-
-  @IsNumber()
-  @ApiProperty({type: 'number'})
-  public by_decision: number;
-}
+import { WeightClass } from '@core/domain/fighting/entity/enum';
 
 export class UpdateFighterRequestBody {
   @IsString()
@@ -35,10 +10,10 @@ export class UpdateFighterRequestBody {
   @ApiProperty({type: 'string'})
   public name: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @IsDefined()
+  @IsEnum(WeightClass)
   @ApiProperty({type: 'string'})
-  public weight_class: string;
+  public weight_class: WeightClass;
 
   @IsString()
   @IsNotEmpty()
@@ -49,11 +24,6 @@ export class UpdateFighterRequestBody {
   @IsNotEmpty()
   @ApiProperty({type: 'string'})
   public team: string;
-
-  @IsDefined()
-  @IsInstance(UpdateFighterRequestFighterStats)
-  @ApiProperty({type: 'UpdateFighterRequestFighterStats'})
-  public stats: UpdateFighterRequestFighterStats;
 }
 
 export interface UpdateFighterResponse {
@@ -66,13 +36,9 @@ export class UpdateFighterMapper {
       entity_with_updates: {
         id: fighter_id,
         name: request.name,
-        weight_class: request.weight_class,
+        weight_class: request.weight_class as WeightClass,
         nationality: request.nationality,
         team: request.team,
-        stats: {
-          ...request.stats,
-          fighter_id
-        }
       }
     };
   }

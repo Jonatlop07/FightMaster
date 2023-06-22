@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column } from 'typeorm';
 import { DBConfiguration } from '@db/typeorm/config';
 import EventDBEntity from '@db/typeorm/entity/event';
 import FighterDBEntity from '@db/typeorm/entity/fighter';
@@ -8,6 +8,9 @@ import { Nullable } from '@core/abstraction/type';
 export default class FightDBEntity {
   @PrimaryGeneratedColumn()
   public id: number;
+
+  @Column({ name: 'winMethod', nullable: true })
+  public win_method: string;
 
   @ManyToOne(() => EventDBEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'eventId', referencedColumnName: 'id' })

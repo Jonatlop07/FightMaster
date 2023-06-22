@@ -11,6 +11,10 @@ import { CreateFightGateway } from '@core/domain/fighting/use_case/fight/create_
 import { QueryFightsGateway } from '@core/domain/fighting/use_case/fight/query_fights';
 import { UpdateFightGateway } from '@core/domain/fighting/use_case/fight/update_fight';
 import { DeleteFightGateway } from '@core/domain/fighting/use_case/fight/delete_fight';
+import { QueryWeightClassRankingGateway } from '@core/domain/fighting/use_case/ranking/query_weight_class_ranking';
+import { UpdateRankingGateway } from '@core/domain/fighting/use_case/ranking/update_ranking';
+import { QueryFighterStatsGateway } from '@core/domain/fighting/use_case/fight/query_fighter_stats';
+import { CreateFighterRankingGateway } from '@core/domain/fighting/use_case/ranking/create_fighter_ranking.service';
 
 export default interface FighterRepository
   extends
@@ -34,4 +38,11 @@ export interface FightRepository
   QueryFightsGateway,
   QueryFightsGateway,
   UpdateFightGateway,
-  DeleteFightGateway {}
+  DeleteFightGateway,
+  QueryFighterStatsGateway {}
+
+export interface RankingRepository
+  extends
+  QueryWeightClassRankingGateway,
+  UpdateRankingGateway,
+  CreateFighterRankingGateway {}

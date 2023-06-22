@@ -1,4 +1,4 @@
-import { EntityName } from '@core/domain/fighting/entity/entity_name';
+import { EntityName } from '@core/domain/fighting/entity/enum';
 
 export function createdEntityApiResponseMessage(entity_name: EntityName) {
   return `${entity_name} successfully created`;
@@ -26,4 +26,12 @@ export function notFoundEntityResponseMessage(entity_name: EntityName) {
 
 export function invalidEntityFieldsResponseMessage(entity_name: EntityName) {
   return `${entity_name} data has invalid format`;
+}
+
+export function queriedDataApiResponseMessage(data_alias: string) {
+  return `${data_alias} successfully retrieved`;
+}
+
+export function notFoundDataResponseMessage(data_alias: string) {
+  return `${data_alias} could not be found`;
 }

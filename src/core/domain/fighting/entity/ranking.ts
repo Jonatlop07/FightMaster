@@ -1,10 +1,12 @@
 import { Entity } from '@core/abstraction/entity';
-import { IsInt, IsString } from 'class-validator';
+import { IsDefined, IsEnum, IsInt } from 'class-validator';
 import { CreateRankingEntityPayload } from '@core/domain/fighting/entity/payload';
+import { WeightClass } from '@core/domain/fighting/entity/enum';
 
 export class Ranking extends Entity<number> {
-  @IsString()
-  private readonly weight_class: string;
+  @IsDefined()
+  @IsEnum(WeightClass)
+  private readonly weight_class: WeightClass;
 
   @IsInt()
   private readonly rank: number;

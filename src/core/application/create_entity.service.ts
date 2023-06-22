@@ -4,7 +4,7 @@ import {
   CreateEntityInputPort,
   CreateEntityInteractor, CreateEntityOutputPort
 } from '@core/domain/fighting/use_case/create_entity';
-import { EntityName } from '@core/domain/fighting/entity/entity_name';
+import { EntityName } from '@core/domain/fighting/entity/enum';
 import { toPrettyJsonString } from '@core/abstraction/format';
 
 export default class CreateEntityService<EntityDetailsDTO, EntityDTO>

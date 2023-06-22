@@ -1,6 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, Relation } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { DBConfiguration } from '@db/typeorm/config';
-import FighterStatsDBEntity from '@db/typeorm/entity/fighter_stats';
 
 @Entity({ name: 'fighter', schema: DBConfiguration.SCHEMA })
 export default class FighterDBEntity {
@@ -18,14 +17,4 @@ export default class FighterDBEntity {
 
   @Column({ length: 255, nullable: false })
   public team: string;
-
-  @OneToOne(
-    () => FighterStatsDBEntity,
-    (stats) => stats.fighter,
-    {
-      cascade: true,
-      onDelete: 'CASCADE',
-    }
-  )
-  public stats: Relation<FighterStatsDBEntity>;
 }
